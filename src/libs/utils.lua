@@ -93,7 +93,8 @@ function utils.checkkeys(keys, tbl)
 		elseif keydata.default ~= nil and tbl[keydata.name] == nil then
 			tbl[keydata.name] = keydata.default
 		else
-			if type(tbl[keydata.name]) ~= keydata.type then
+			if keydata.type ~= nil and
+			   type(tbl[keydata.name]) ~= keydata.type then
 				errorhandler(keydata.name, "invalid key value", tbl.path)
 			end
 
