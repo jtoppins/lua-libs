@@ -88,7 +88,8 @@ end
 
 function utils.checkkeys(keys, tbl)
 	for _, keydata in ipairs(keys) do
-		if keydata.default == nil and tbl[keydata.name] == nil then
+		if keydata.default == nil and tbl[keydata.name] == nil
+		   and type(keydata.check) ~= "function" then
 			errorhandler(keydata.name, "missing required key", tbl.path)
 		elseif keydata.default ~= nil and tbl[keydata.name] == nil then
 			tbl[keydata.name] = keydata.default
