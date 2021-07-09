@@ -110,4 +110,25 @@ end
 -- return the directory seperator used for the given OS
 utils.sep = package.config:sub(1,1)
 
+-- create an iterator over a table using sorted keys
+-- order: optional, function to sort the keys with
+function utils.sortedpairs(tbl, order)
+	local index = 1
+	local keys = {}
+	for key, _ in pairs(tbl) do
+		table.insert(keys, key)
+	end
+	table.sort(keys, order)
+	local function iterator()
+		local key = keys[index]
+		if key ~= nil then
+			index = index + 1
+			return key, tbl[key]
+		else
+			return nil
+		end
+	end
+	return iterator, tbl, index
+end
+
 return utils
