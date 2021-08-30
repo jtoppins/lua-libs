@@ -99,9 +99,12 @@ function utils.checkkeys(keys, tbl)
 				errorhandler(keydata.name, "invalid key value", tbl.path)
 			end
 
-			if type(keydata.check) == "function" and
-				not keydata.check(keydata, tbl) then
-				errorhandler(keydata.name, "invalid key value", tbl.path)
+			if type(keydata.check) == "function" then
+				local valid, msg = keydata.check(keydata, tbl)
+				if not valid then
+					errorhandler(keydata.name,
+						tostring(msg or "invalid key value"), tbl.path)
+				end
 			end
 		end
 	end
