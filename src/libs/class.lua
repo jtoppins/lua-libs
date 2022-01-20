@@ -11,6 +11,10 @@ local function class(base, ...)
 	local cls_mt = {
 		__call = function(cls, ...)
 			local c = utils.shallowclone(cls)
+			c.__mt = nil
+			if cls.__mt ~= nil then
+				setmetatable(c, cls.__mt)
+			end
 			if type(c.__init) == "function" then
 				c.__init(c, ...)
 			end

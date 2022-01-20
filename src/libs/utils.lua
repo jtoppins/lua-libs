@@ -56,6 +56,13 @@ function utils.mergetables(dest, source)
 	return dest
 end
 
+function utils.override_ops(cls, mt)
+	local curmt = require("libs.utils").mergetables({}, cls.__mt)
+	curmt = require("libs.utils").mergetables(curmt, mt)
+	cls.__mt = curmt
+	return cls
+end
+
 function utils.readlua(file, tblname, env)
 	assert(file and type(file) == "string", "file path must be provided")
 	local f = assert(loadfile(file))
