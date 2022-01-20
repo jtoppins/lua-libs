@@ -12,12 +12,6 @@ function utils.getkey(tbl, val)
 	return nil
 end
 
-function utils.foreach(ctx, itr, fcn, array, ...)
-	for k, v in itr(array) do
-		fcn(ctx, k, v, unpack({select(1, ...)}))
-	end
-end
-
 function utils.shallowclone(obj)
 	local obj_type = type(obj)
 	local copy
