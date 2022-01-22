@@ -1,0 +1,268 @@
+-- SPDX-License-Identifier: LGPL-3.0
+
+local utils = require("libs.utils")
+local class = require("libs.namedclass")
+local graph = require("libs.containers.graph")
+local astar = require("libs.algorithms.search_astar")
+
+local propmt = {}
+function propmt.__eq(self, other)
+	return self.id == other.id and self.value == other.value and
+		self.subject == other.subject
+end
+
+--- @class Property
+-- Provides a common interface for representing an agent centric
+-- symbolic state.
+--
+-- @field id a globally unique ID of the symbol
+-- @field value the value of the symbol
+-- @field subject the subject of the symbol, for example a state of
+--        "target dead" would have a subject point to the object and
+--        the value would either be true or false.
+local Property = utils.override_ops(class("world-property"), propmt)
+function Property:__init(_id, value, subject)
+	self.id      = _id
+	self.value   = value
+	self.subject = subject
+end
+
+--- A copy constructor for Property.
+function Property:copy()
+	return Property(self.id, self.value, self.subject)
+end
+
+--- @class WorldState
+-- Is a set of Property objects with the set representing a particular
+-- state.
+--
+-- @field props set of properties, where the key is the property ID,
+--        thus only one unique property may exist in a given state.
+local WorldState = class("WorldState")
+function WorldState:__init(props)
+	self.props = {}
+	for _, p in pairs(props or {}) do
+		self.props[p.id] = p
+	end
+end
+
+--- Iterate over all properties contained in a WorldState.
+function WorldState:iterate()
+	return next, self.props, nil
+end
+
+--- A copy constructor for WorldState.
+function WorldState:copy()
+	local newprops = {}
+	for k, prop in pairs(self.props) do
+		newprops[k] = prop:copy()
+	end
+	return WorldState(newprops)
+end
+
+--- Retrieve Property for the given _id_.
+function WorldState:get(id)
+	return self.props[id]
+end
+
+--- Add a new Property to the WorldState.
+function WorldState:add(newprop)
+	self.props[newprop.id] = newprop
+end
+
+--- Remove a Property from the WorldState.
+function WorldState:remove(id)
+	self.props[id] = nil
+end
+
+--- Given _state_ determine how many symbols we have are not satisfied
+-- by _state_. Thus we loop over our symbols and test if _state_ has
+-- our symbol and if the two symbols are equal.
+--
+-- @param state the state to check against
+-- @return list of property ids not satisfied by _state_
+function WorldState:unsatisfied(state)
+	local ids = {}
+	for _, myprop in self:iterate() do
+		local sprop = state:get(myprop.id)
+		if sprop == nil or sprop ~= myprop then
+			table.insert(ids, myprop.id)
+		end
+	end
+	return ids
+end
+
+--- Distance of this state from the given _state_, distance is measured
+-- in the number of unsatisfied properties in self. This allows us to
+-- know we have x number of properties to become a sub-state of _state_.
+-- Remember our equality allows self to have fewer properties than _state_
+-- as long as all properties in self equal to properties in _state_, thus
+-- self is a sub-state of _state_.
+--
+-- @param state the state to calculate the distance to
+-- @return distance from _state_
+function WorldState:distance(state)
+	local dist = self:unsatisfied(state)
+	return #(dist)
+end
+
+--- @class Action
+-- Represents an activity in a plan to be executed by some agent.
+--
+-- @field preconditions a set of properties representing states that
+--        need to be true before the action can be executed.
+-- @field effects a set of properties representing states that the
+--        action purports to be able to achieve.
+-- @field cost the cost of the action, used in finding the least cost
+--        path.
+local Action = class("Action", graph.Edge)
+function Action:__init(cost, precond, effects)
+	graph.Edge.__init(self, cost)
+	self.preconditions = WorldState(precond)
+	self.effects = WorldState(effects)
+end
+
+--- Is called during planning and is a way for actions to check states
+-- that are not easily represented as symbols, such as is there a path
+-- to the goal.
+--
+-- @return bool true if the action should be considered in planning
+function Action:checkProceduralPreconditions(--[[agent]])
+	return true
+end
+
+--- @class StateNode
+-- Represents a WorldState in a graph.
+local StateNode = class("StateNode", graph.Node)
+function StateNode:__init(state, goal, action)
+	graph.Node.__init(self)
+	self.state = state
+	self.goal = goal
+	self.action = action
+end
+
+function StateNode:found(node)
+	return node.goal:distance(node.state) == 0 and
+		self.goal:distance(node.state) == 0
+end
+
+function StateNode:unsatisfied()
+	return self.goal:unsatisfied(self.state)
+end
+
+--- @class GOAPGraph
+-- Describes the associate between States (nodes) and Actions (edges)
+-- allowing graph traversal algorithms to reason about these objects.
+local GOAPGraph = class("GOAPGraph", graph.Graph)
+function GOAPGraph:__init(agent, actions)
+	self.agent = agent
+	self.effect2actions = {}
+
+	for _, action in pairs(actions) do
+		self:add_action(action)
+	end
+end
+
+--- Adds an Action object (edge) for consideration when planning.
+function GOAPGraph:add_action(action)
+	for _, effect in action.effects:iterate() do
+		if self.effect2actions[effect.id] == nil then
+			self.effect2actions[effect.id] = {}
+		end
+		table.insert(self.effect2actions[effect.id], action)
+	end
+end
+
+--- Handles determining if an action produces an edge from the current
+-- node (_node_) to a new state.
+function GOAPGraph:handle_action(node, symbol, action)
+	if action.effects:get(symbol) ~= node.goal:get(symbol) then
+		return nil
+	end
+
+	local goal = node.goal:copy()
+	local state = node.state:copy()
+
+	-- if preconditions are not satisfied add them to a new goal
+	-- this action might be a solution as long as other actions
+	-- can solve the now new conditions of the goal.
+	if action.preconditions:distance(state) ~= 0 then
+		for _, precond in action.preconditions:iterate() do
+			goal:add(precond:copy())
+		end
+	end
+
+	-- further prune actions based on a function result provided
+	-- by the action
+	if not action:checkProceduralPreconditions(self.agent) then
+		return nil
+	end
+
+	-- apply effects of the action to the current state
+	for _, effect in action.effects:iterate() do
+		state:add(effect:copy())
+	end
+
+	return StateNode(state, goal, action)
+end
+
+--- Finds neighbor nodes for _node_ by traversing the set of Actions
+-- the graph knows about.
+function GOAPGraph:neighbors(node)
+	local neighbors = {}
+	for _, symbol in ipairs(node:unsatisfied()) do
+		local actions = self.effect2actions[symbol]
+		for _, action in pairs(actions or {}) do
+			local neigh = self:handle_action(node, symbol, action)
+			if neigh ~= nil then
+				neighbors[neigh] = neigh.action
+			end
+		end
+	end
+	return neighbors
+end
+
+--- Default A* heuristic for determining the next state to investigate
+-- further when planning.
+local function goap_distance(node, goal)
+	return goal.goal:distance(node.state)
+end
+
+--- Converts the list of nodes returned by A* into an ordered plan
+-- of Action objects.
+-- @return: goal, plan, cost; where
+--   goal is the desired world state after including action preconditions
+--   plan the set of actions to accomplish to goal
+--   cost of the plan
+local function find_plan(G, worldstate, goal, h, search, order)
+	local path, cost, plan
+	local start = StateNode(worldstate, goal, nil)
+	local gnode = StateNode(nil, goal, nil)
+	h = h or goap_distance
+	search = search or astar
+
+	path, cost = search(G, start, gnode, h)
+	if path:empty() then
+		return nil
+	end
+
+	path:pophead()
+	plan = {}
+	for _, node in path:iterate() do
+		table.insert(plan, node.action)
+	end
+	if order == true then
+		table.sort(plan)
+	end
+	return path:peektail().goal, plan, cost
+end
+
+local _goap = {}
+_goap.Property = Property
+_goap.WorldState = WorldState
+_goap.Action = Action
+_goap.Node = StateNode
+_goap.Graph = GOAPGraph
+_goap.find_plan = find_plan
+
+return _goap
