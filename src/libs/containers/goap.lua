@@ -5,10 +5,12 @@ local class = require("libs.namedclass")
 local graph = require("libs.containers.graph")
 local astar = require("libs.algorithms.search_astar")
 
+local ANYHANDLE = {}
+
 local propmt = {}
 function propmt.__eq(self, other)
-	return self.id == other.id and self.value == other.value and
-		self.subject == other.subject
+	return self.id == other.id and (self.value == other.value or
+		self.value == ANYHANDLE or other.value == ANYHANDLE)
 end
 
 --- @class Property
@@ -17,19 +19,18 @@ end
 --
 -- @field id a globally unique ID of the symbol
 -- @field value the value of the symbol
--- @field subject the subject of the symbol, for example a state of
---        "target dead" would have a subject point to the object and
---        the value would either be true or false.
 local Property = utils.override_ops(class("world-property"), propmt)
-function Property:__init(_id, value, subject)
+function Property:__init(_id, value)
 	self.id      = _id
 	self.value   = value
-	self.subject = subject
+	self.ANYHANDLE = nil
 end
+
+Property.ANYHANDLE = ANYHANDLE
 
 --- A copy constructor for Property.
 function Property:copy()
-	return Property(self.id, self.value, self.subject)
+	return Property(self.id, self.value)
 end
 
 --- @class WorldState
