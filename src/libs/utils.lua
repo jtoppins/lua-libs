@@ -135,4 +135,10 @@ function utils.sortedpairs(tbl, order)
 	return iterator, tbl, index
 end
 
+--- returns a value, _x_, is guaranteed to be between min and max,
+-- inclusive.
+function utils.clamp(x, min, max)
+	return math.min(math.max(x, min), max)
+end
+
 return utils
