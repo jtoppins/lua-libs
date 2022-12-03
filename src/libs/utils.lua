@@ -87,6 +87,8 @@ local function errorhandler(key, m, path)
 	error(msg, 2)
 end
 
+-- TODO: change this so that the function returns the error
+-- message instead of calling error
 function utils.checkkeys(keys, tbl)
 	for _, keydata in ipairs(keys) do
 		if keydata.default == nil and tbl[keydata.name] == nil
@@ -133,6 +135,17 @@ function utils.sortedpairs(tbl, order)
 		end
 	end
 	return iterator, tbl, index
+end
+
+--- returns a value, _x_, is guaranteed to be between min and max,
+-- inclusive.
+function utils.clamp(x, min, max)
+	return math.min(math.max(x, min), max)
+end
+
+--- add a random value between +/- sigma to val and return
+function utils.addstddev(val, sigma)
+	return val + math.random(-sigma, sigma)
 end
 
 return utils

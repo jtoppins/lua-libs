@@ -14,12 +14,14 @@ local function search_astar(graph, start, goal, heuristic)
 	local frontier = PriorityQueue()
 	local from = { [start] = true, }
 	local cost = { [start] = 0, }
+	local current
 
 	frontier:push(0, start)
 	while not frontier:empty() do
-		local current = frontier:pop()
+		current = frontier:pop()
 
-		if current == goal then
+		if goal:found(current) then
+			goal = current
 			break
 		end
 
