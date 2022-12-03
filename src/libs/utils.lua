@@ -87,6 +87,8 @@ local function errorhandler(key, m, path)
 	error(msg, 2)
 end
 
+-- TODO: change this so that the function returns the error
+-- message instead of calling error
 function utils.checkkeys(keys, tbl)
 	for _, keydata in ipairs(keys) do
 		if keydata.default == nil and tbl[keydata.name] == nil
