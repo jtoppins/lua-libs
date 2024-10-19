@@ -77,13 +77,18 @@ function utils.readlua(file, tblname, env)
 	return tbl, file
 end
 
+--- read configuration from cfgfiles and store read config into tbl
+-- @param cfgfiles a table of configuration files to read
+-- @param tbl the table to store the configuration into
 function utils.readconfigs(cfgfiles, tbl)
 	for _, cfg in pairs(cfgfiles) do
-		tbl[cfg.name] = cfg.default
+		tbl[cfg.name] = cfg.default or {}
 		if lfs.attributes(cfg.file) ~= nil then
-			utils.mergetables(tbl[cfg.name],
-				cfg.validate(cfg,
-					utils.readlua(cfg.file, cfg.cfgtblname, cfg.env)))
+			local readtbl = utils.readlua(cfg.file,
+						      cfg.cfgtblname,
+						      cfg.env)
+			readtbl = cfg.validate(cfg, readtbl)
+			utils.mergetables(tbl[cfg.name], readtbl)
 		end
 	end
 end
