@@ -3,6 +3,13 @@
 
 local utils = {}
 
+--- return the directory seperator used for the given OS
+utils.sep = package.config:sub(1,1)
+
+function utils.join_paths(...)
+	return table.concat({...}, utils.sep)
+end
+
 function utils.getkey(tbl, val)
 	for k, v in pairs(tbl) do
 		if v == val then
@@ -112,9 +119,6 @@ function utils.checkkeys(keys, tbl)
 		end
 	end
 end
-
--- return the directory seperator used for the given OS
-utils.sep = package.config:sub(1,1)
 
 -- create an iterator over a table using sorted keys
 -- order: optional, function to sort the keys with
