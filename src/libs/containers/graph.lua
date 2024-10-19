@@ -29,7 +29,7 @@ function Node:found(node)
 	return self == node
 end
 
--- the storage model for adjancy means we can only have 1 edge per
+-- the storage model for adjacency means we can only have 1 edge per
 -- node pair. This should be ok as we can just have the edge class
 -- have flags for things like domain
 local Graph = class("graph")
