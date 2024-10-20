@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
 local utils = require("libs.utils")
-local class = require("libs.namedclass")
+local class = require("libs.classnamed")
 local graph = require("libs.containers.graph")
 local astar = require("libs.algorithms.search_astar")
 

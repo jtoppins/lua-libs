@@ -3,7 +3,7 @@
 --]]
 
 local utils = require("libs.utils")
-local class = require("libs.namedclass")
+local class = require("libs.classnamed")
 
 local curveTypes = {
 	["LINEAR"]    = 1,

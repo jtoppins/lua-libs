@@ -4,7 +4,7 @@
 -- Basic Graph container
 --]]
 
-local class = require("libs.namedclass")
+local class = require("libs.classnamed")
 
 local errno = {
 	ENONE     = 0,  -- no error

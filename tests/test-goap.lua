@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local class = require("libs.namedclass")
+local class = require("libs.classnamed")
 local goap = require("libs.containers.goap")
 
 local ID = {

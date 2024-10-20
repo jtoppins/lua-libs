@@ -2,7 +2,7 @@
 require("os")
 
 local utils = require("libs.utils")
-local class = require("libs.class")
+local class = require("libs.classnamed")
 
 local function test()
 	local A_mt = {}
