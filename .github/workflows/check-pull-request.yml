@@ -9,7 +9,7 @@ env:
   PACKAGES: lua5.1 lua-md5 lua-filesystem lua-check make
 
 jobs:
-  luacheck:
+  check:
     runs-on: ubuntu-latest
     steps:
     - name: Install Packages
@@ -18,17 +18,5 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v2
 
-    - name: Run luacheck
-      run: luacheck .
-
-  runtests:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Install Packages
-      run: sudo apt-get install $PACKAGES
-
-    - name: Checkout Source
-      uses: actions/checkout@v2
-
-    - name: Run Tests
+    - name: Run checks
       run: make check

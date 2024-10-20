@@ -20,8 +20,8 @@ end
 -- @field id a globally unique ID of the symbol
 -- @field value the value of the symbol
 local Property = utils.override_ops(class("world-property"), propmt)
-function Property:__init(_id, value)
-	self.id      = _id
+function Property:__init(__id, value)
+	self.id      = __id
 	self.value   = value
 	self.ANYHANDLE = nil
 end

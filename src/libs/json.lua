@@ -483,8 +483,6 @@ local function grok_string(self, text, start, etc)
                if lo_surrogate then
                   i = i + 6 -- bypass the low surrogate we just read
                   codepoint = 0x2400 + (codepoint - 0xD800) * 0x400 + tonumber(lo_surrogate, 16)
-               else
-                  -- not a proper low, so we'll just leave the first codepoint as is and spit it out.
                end
             end
             VALUE = VALUE .. unicode_codepoint_as_utf8(codepoint)

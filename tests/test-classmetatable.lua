@@ -6,21 +6,20 @@ local class = require("libs.classnamed")
 
 local function test()
 	local A_mt = {}
-	function A_mt.__lt(self, other)
-		return self.cost < other.cost
+	function A_mt.__lt(a, other)
+		return a.cost < other.cost
 	end
 
-	local A = utils.override_ops(class(), A_mt)
+	function A_mt.__eq(a, other)
+		return a.cost == other.cost
+	end
+
+	local A = utils.override_ops(class("A"), A_mt)
 	function A:__init(v)
 		self.cost = v
 	end
 
-	local B_mt = {}
-	function B_mt.__eq(self, other)
-		return self.cost == other.cost
-	end
-
-	local B = utils.override_ops(class(A), B_mt)
+	local B = class("B", A)
 
 	local a = A(3)
 	local b = A(5)
@@ -29,8 +28,10 @@ local function test()
 
 	assert(a < b)
 	assert(a >= c)
-	assert(a == d)
 	assert(b > c)
+	assert(a == d)
 	assert(type(getmetatable(d).__lt) == "function")
+	assert(type(getmetatable(d).__eq) == "function")
+	assert(type(getmetatable(a).__eq) == "function")
 end
 os.exit(test())

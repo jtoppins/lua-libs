@@ -2,6 +2,7 @@
 require("os")
 local graph = require("libs.containers.graph")
 
+-- luacheck: ignore 311
 local function test()
 	local G = graph.Graph()
 	local a = graph.Node()
