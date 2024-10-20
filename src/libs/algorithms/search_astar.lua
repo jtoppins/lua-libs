@@ -1,8 +1,6 @@
---[[
 -- SPDX-License-Identifier: LGPL-3.0
---
--- Defines an A* search algorithm
---]]
+
+--- Defines an A* search algorithm
 
 local check = require("libs.check")
 local PriorityQueue = require("libs.containers.pqueue")

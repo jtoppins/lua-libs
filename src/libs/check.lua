@@ -1,8 +1,6 @@
---[[
 -- SPDX-License-Identifier: LGPL-3.0
---
--- Library for checking input values
---]]
+
+--- Library for checking input values
 
 local utils = require("libs.utils")
 

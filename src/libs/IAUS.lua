@@ -1,6 +1,4 @@
---[[
 -- SPDX-License-Identifier: LGPL-3.0
---]]
 
 local utils = require("libs.utils")
 local class = require("libs.classnamed")

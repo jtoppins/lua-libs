@@ -1,8 +1,6 @@
---[[
 -- SPDX-License-Identifier: LGPL-3.0
---
+
 -- Basic Graph container
---]]
 
 local class = require("libs.classnamed")
 
