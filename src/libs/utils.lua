@@ -78,8 +78,8 @@ function utils.mergetables(dest, source)
 end
 
 function utils.override_ops(cls, mt)
-	local curmt = require("libs.utils").mergetables({}, cls.__mt)
-	curmt = require("libs.utils").mergetables(curmt, mt)
+	local curmt = utils.mergetables({}, cls.__mt)
+	curmt = utils.mergetables(curmt, mt)
 	cls.__mt = curmt
 	return cls
 end
