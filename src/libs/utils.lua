@@ -1,5 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+local mylfs = require("lfs")
 local utils = {}
 
 --- return the directory seperator used for the given OS
@@ -8,6 +9,26 @@ utils.sep = package.config:sub(1,1)
 function utils.join_paths(...)
 	return table.concat({...}, utils.sep)
 end
+
+function utils.isDir(name)
+	local attr = mylfs.attributes(name)
+
+	if attr == nil then
+		return false
+	end
+	return attr.mode == "directory"
+end
+
+function utils.split(str, sep)
+	sep = sep or "%s"
+	local t = {}
+
+	for s in string.gmatch(str, "([^"..sep.."]+)") do
+		table.insert(t, s)
+	end
+	return t
+end
+
 
 function utils.getkey(tbl, val)
 	for k, v in pairs(tbl) do
