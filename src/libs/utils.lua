@@ -103,7 +103,7 @@ end
 function utils.readconfigs(cfgfiles, tbl)
 	for _, cfg in pairs(cfgfiles) do
 		tbl[cfg.name] = cfg.default or {}
-		if lfs.attributes(cfg.file) ~= nil then
+		if mylfs.attributes(cfg.file) ~= nil then
 			local readtbl = utils.readlua(cfg.file,
 						      cfg.cfgtblname,
 						      cfg.env)
