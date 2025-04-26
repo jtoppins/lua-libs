@@ -1,28 +1,120 @@
 MAKEFLAGS := --no-print-directory
-VERSION   ?= $(shell git describe)
+
+PHONY := __all
+__all:
+
+unexport LC_ALL
+unexport GREP_OPTIONS
+
+this-makefile := $(lastword $(MAKEFILE_LIST))
+srctree := $(realpath $(dir $(this-makefile)))
+
+# Beautify output
+# ----------------------------------------------------------------
+# Build commands start with "cmd_". You can optionally define
+# "quiet_cmd_*". If defined, the short log is printed. Otherwise, no log from
+# that command is printed by default.
+#
+# e.g.)
+#    quiet_cmd_install = INSTALL  $(SOURCE)
+#          cmd_install = $(INSTALL) $(SOURCE) $(DEST)
+#
+# A simple variant is to prefix commands with $(Q) - that's useful
+# for commands that shall be hidden in non-verbose mode.
+#
+#    $(Q)$(INSTALL) foo
+#
+# If BUILD_VERBOSE contains 1, the whole command is echoed.
+# Use 'make V=1' to see the full commands
+
+ifeq ("$(origin V)", "command line")
+	BUILD_VERBOSE = $(V)
+endif
+
+quiet = quiet_
+Q = @
+
+ifneq ($(findstring 1, $(BUILD_VERBOSE)),)
+	quiet =
+	Q =
+endif
+
+# If the user is running make -s (silent mode), suppress echoing of
+# commands
+ifneq ($(findstring s,$(firstword -$(MAKEFLAGS))),)
+quiet=silent_
+override BUILD_VERBOSE :=
+endif
+
+export quiet Q BUILD_VERBOSE
+
+cmd = $(if $(Q),@set -e; echo "$(quiet_cmd_$(1))"; $(cmd_$(1)),$(cmd_$(1)))
+
+# prefix is used to change the install target
+INSTALLPREFIX := $(if $(PREFIX), "$(PREFIX)"/,)
+LIBS_VERSION  ?= $(shell git describe)
 
 LUA_PATH := $(CURDIR)/src/?.lua;;
 export LUA_PATH
 
-.PHONY: help check check-syntax tests build docs
+# Make variables
+INSTALL               = install
+INSTALLFLAGS          = --compare
+ZIP                   = zip
+TAR                   = tar
+SED                   = sed
+LUA                   = lua5.1
+LUACC                 = luac
+LUACHECK              = luacheck
+LUACHECK_OPTS         = $(if $(Q),-q)
+LUATESTS              = busted
+TZ                    = "UTC 0"
+
+export PREFIX LIBS_VERSION
+export INSTALL INSTALLFLAGS ZIP TAR SED LUA LUACC LUACHECK LUABUSTED TZ
+export LUACHECK_OPTS
+
+quiet_cmd_rmfiles = CLEAN  $(rm-files)
+      cmd_rmfiles = rm -rf $(rm-files)
+
+quiet_cmd_genfile = GEN    $@
+      cmd_genfile = \
+		$(SED) -e "s:%VERSION%:$(LIBS_VERSION):" $< > $@
+
+PHONY += all
+__all: all
+
+PHONY += all
+all: generated
+
+generated_files := src/libs.lua
+rm-files := $(generated_files)
+
+PHONY += generated
+generated: $(generated_files)
+
+PHONY += check syntax tests
+check: syntax tests
+
+syntax: generated
+	$(Q)$(LUACHECK) $(LUACHECK_OPTS) src tests
+
+tests: generated
+	$(Q)(cd tests; busted)
+
+PHONY += clean
+clean:
+	$(call cmd,rmfiles)
+
+PHONY += help
 help:
 	@echo 'Targets:'
+	@echo '  clean        - Remove all built artifacts'
 	@echo '  check        - Run all unit tests and syntax checks'
-	@echo '  check-syntax - Run luacheck lint checker'
+	@echo '  syntax       - Run luacheck lint checker'
 	@echo '  tests        - Run unit tests'
-	@echo '  build        - Build a releasable package, including docs'
-	@echo '  docs         - Build documentation'
 
-check-syntax:
-	luacheck -q src tests
+$(generated_files): %.lua: %.lua.in
+	$(call cmd,genfile)
 
-tests:
-	@$(MAKE) -C tests
-
-check: check-syntax tests
-
-docs:
-	@echo 'no docs to generate'
-
-build: docs
-	@echo 'no build steps yet'
+.PHONY: $(PHONY)

@@ -9,7 +9,7 @@ end
 
 local _G   = _G
 local libs = {
-	_VERSION     = "1",
+	_VERSION     = "%VERSION%",
 	_DESCRIPTION = "libs: general functions that most common languages have",
 	_COPYRIGHT   = "Copyright (c) 2019 Jonathan Toppins",
 	algorithms   = require("libs.algorithms"),
