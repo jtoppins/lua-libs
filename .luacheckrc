@@ -19,3 +19,15 @@ files["src/libs/json.lua"] = {
 files["src/libs/utils.lua"] = {
 	max_cyclomatic_complexity = 12,
 }
+
+files["tests/*"] = {
+	ignore = {"143", },
+	globals = {
+		-- busted globals
+		"describe",
+		"test",
+		"pending",
+		"before_each",
+		"insulate",
+	},
+}

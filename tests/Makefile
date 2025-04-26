@@ -1,3 +1,0 @@
-.PHONY: tests
-tests:
-	@./runtests

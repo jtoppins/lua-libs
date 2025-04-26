@@ -1,0 +1,11 @@
+local busted = {}
+
+busted._all = {
+	lua = "/usr/bin/lua5.1",
+	lpath = "../src/?.lua",
+	output = "plainTerminal",
+	pattern = "test_",
+	ROOT = { ".", },
+}
+
+return busted
