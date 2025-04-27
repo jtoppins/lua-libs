@@ -243,11 +243,12 @@ local function find_plan(G, worldstate, goal, h, search, order)
 	search = search or astar
 
 	path, cost = search(G, start, gnode, h)
+	-- pop off the goal as we don't need that in the plan
+	path:pophead()
 	if path:empty() == true then
 		return nil
 	end
 
-	path:pophead()
 	plan = {}
 	for _, node in path:iterate() do
 		table.insert(plan, node.action)
