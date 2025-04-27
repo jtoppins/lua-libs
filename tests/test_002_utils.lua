@@ -1,8 +1,9 @@
 #!/usr/bin/lua
-require 'busted.runner'()
+require('busted.runner')()
 require("os")
+require("libs")
 
-local utils = require("libs.utils")
+local utils = libs.utils
 
 describe("validate utils", function()
 	test("sortedpairs", function()

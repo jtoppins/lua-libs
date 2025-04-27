@@ -1,10 +1,18 @@
 #!/usr/bin/lua
-require 'busted.runner'()
+require('busted.runner')()
 require("os")
+require("libs")
 
-local utils = require("libs.utils")
-local class = require("libs.class")
-local classnamed = require("libs.classnamed")
+local utils = libs.utils
+local class = libs.class
+local classnamed = libs.classnamed
+
+describe("libs", function()
+	test("verify", function()
+		assert(_G["libs"] ~= nil)
+		assert(libs.class ~= nil)
+	end)
+end)
 
 describe("validate class", function()
 	test("verify basic operation", function()

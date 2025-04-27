@@ -1,7 +1,8 @@
 #!/usr/bin/lua
-
-local class = require("libs.classnamed")
-local goap = require("libs.containers.goap")
+require('busted.runner')()
+require("libs")
+local class = libs.classnamed
+local goap = libs.containers.GOAP
 
 local ID = {
 	["ISARMED"]     = "isArmed",     -- <bool>
@@ -177,20 +178,20 @@ local function check(test, plan, cost)
 	end
 end
 
-local function main()
-	local prop = goap.Property(ID.ATNODE, true)
-	local prop_copy = prop:copy()
-	assert(prop_copy == prop)
-	prop.value = false
-	assert(prop_copy ~= prop)
+describe("containers.GOAP", function()
+	test("tests", function()
+		local prop = goap.Property(ID.ATNODE, true)
+		local prop_copy = prop:copy()
+		assert.is.equal(prop_copy, prop)
+		prop.value = false
+		assert(prop_copy ~= prop)
 
-	for _, test in ipairs(tests) do
-		local _, plan, cost = goap.find_plan(
-			goap.Graph({}, test.actions),
-			test.worldstate,
-			test.goal)
-		check(test, plan, cost)
-	end
-end
-
-os.exit(main())
+		for _, test in ipairs(tests) do
+			local _, plan, cost = goap.find_plan(
+				goap.Graph({}, test.actions),
+				test.worldstate,
+				test.goal)
+			check(test, plan, cost)
+		end
+	end)
+end)
