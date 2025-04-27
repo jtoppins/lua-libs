@@ -243,7 +243,7 @@ local function find_plan(G, worldstate, goal, h, search, order)
 	search = search or astar
 
 	path, cost = search(G, start, gnode, h)
-	if path:empty() then
+	if path:empty() == true then
 		return nil
 	end
 

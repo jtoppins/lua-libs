@@ -17,6 +17,7 @@
 local Queue = {
 	__index = {
 		pushhead = function(self, v)
+			if v == nil then return end
 			self.head = self.head - 1
 			self[self.head] = v
 		end,
@@ -33,6 +34,7 @@ local Queue = {
 		end,
 
 		pushtail = function(self, v)
+			if v == nil then return end
 			self.tail = self.tail + 1
 			self[self.tail] = v
 		end,
@@ -57,7 +59,12 @@ local Queue = {
 		end,
 
 		size     = function(self)
-			return self.tail - self.head
+			local val = self.tail - self.head + 1
+
+			if val < 0 then
+				return 0
+			end
+			return val
 		end,
 
 		empty    = function(self)
