@@ -127,8 +127,9 @@ end
 -- that are not easily represented as symbols, such as is there a path
 -- to the goal.
 --
+-- @param goalsofar goal the action is trying to satisify
 -- @return bool true if the action should be considered in planning
-function Action:checkProceduralPreconditions(--[[agent]])
+function Action:checkProceduralPreconditions(--[[goalsofar]])
 	return true
 end
 
@@ -195,7 +196,7 @@ function GOAPGraph:handle_action(node, symbol, action)
 
 	-- further prune actions based on a function result provided
 	-- by the action
-	if not action:checkProceduralPreconditions(self.agent) then
+	if not action:checkProceduralPreconditions(goal) then
 		return nil
 	end
 
