@@ -9,7 +9,7 @@ on:
     - master
 
 env:
-  PACKAGES: lua5.1 lua-md5 lua-filesystem lua-check make
+  PACKAGES: make lua5.1 lua-filesystem lua-check lua-busted
 
 jobs:
   check:
