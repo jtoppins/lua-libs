@@ -2,7 +2,7 @@
 require('busted.runner')()
 require("dcsex")
 local class = dcsex.class
-local goap = dcsex.containers.GOAP
+local goap = dcsex.containers.goap
 
 local ID = {
 	["ISARMED"]     = "isArmed",     -- <bool>

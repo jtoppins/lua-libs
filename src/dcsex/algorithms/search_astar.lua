@@ -1,11 +1,16 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
---- Defines an A* search algorithm
-
 local check = require("dcsex.check")
-local PriorityQueue = require("dcsex.containers.pqueue")
-local Queue = require("dcsex.containers.queue")
+local PriorityQueue = require("dcsex.containers.PriorityQueue")
+local Queue = require("dcsex.containers.Queue")
 
+--- Defines an A* search algorithm
+-- @param graph a graph that provides a `neighbors(node)` method.
+-- @param start the starting node in graph
+-- @param goal the goal node in graph
+-- @param heuristic a function of the form
+-- `number heuristic(candidiate_node, goal)` where the numerical value
+-- represents a cost to go to the candidiate_node.
 local function search_astar(graph, start, goal, heuristic)
 	-- check inputs
 	check.func(heuristic)

@@ -3,7 +3,7 @@ require('busted.runner')()
 require("os")
 require("dcsex")
 
-local graph = dcsex.containers.Graph
+local graph = dcsex.containers.graph
 local search_astar = dcsex.algorithms.search_astar
 
 describe("algorithms", function()

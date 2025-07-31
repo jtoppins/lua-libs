@@ -5,6 +5,10 @@ local class = require("dcsex.class")
 local graph = require("dcsex.containers.graph")
 local astar = require("dcsex.algorithms.search_astar")
 
+--- Goal-Oriented Action Planning system.
+-- Provides the basic building blocks to create an action planner.
+-- The unit tests serves as an example of its usage.
+
 local ANYHANDLE = {}
 
 local propmt = {}
@@ -16,10 +20,12 @@ end
 --- @class Property
 -- Provides a common interface for representing an agent centric
 -- symbolic state.
---
--- @field id a globally unique ID of the symbol
--- @field value the value of the symbol
+-- @type Property
 local Property = utils.override_ops(class("world-property"), propmt)
+
+--- Constructor.
+-- @param __id a globally unique ID of the symbol
+-- @param value the value of the symbol
 function Property:__init(__id, value)
 	self.id      = __id
 	self.value   = value
@@ -36,10 +42,12 @@ end
 --- @class WorldState
 -- Is a set of Property objects with the set representing a particular
 -- state.
---
--- @field props set of properties, where the key is the property ID,
---        thus only one unique property may exist in a given state.
+-- @type WorldState
 local WorldState = class("WorldState")
+
+--- Constructor.
+-- @param props set of properties, where the key is the property ID,
+-- thus only one unique property may exist in a given state.
 function WorldState:__init(props)
 	self.props = {}
 	for _, p in pairs(props or {}) do
@@ -107,16 +115,17 @@ function WorldState:distance(state)
 	return #(dist)
 end
 
---- @class Action
--- Represents an activity in a plan to be executed by some agent.
---
--- @field preconditions a set of properties representing states that
---        need to be true before the action can be executed.
--- @field effects a set of properties representing states that the
---        action purports to be able to achieve.
--- @field cost the cost of the action, used in finding the least cost
---        path.
+--- Represents an activity in a plan to be executed by some agent.
+-- @type Action
 local Action = class("Action", graph.Edge)
+
+--- Constructor.
+-- @param cost the cost of the action, used in finding the least cost
+-- path.
+-- @param precond a set of properties representing states that
+-- need to be true before the action can be executed.
+-- @param effects a set of properties representing states that the
+-- action purports to be able to achieve.
 function Action:__init(cost, precond, effects)
 	graph.Edge.__init(self, cost)
 	self.preconditions = WorldState(precond)
@@ -133,9 +142,11 @@ function Action:checkProceduralPreconditions(--[[goalsofar]])
 	return true
 end
 
---- @class StateNode
--- Represents a WorldState in a graph.
+--- Represents a WorldState in a graph.
+-- @type StateNode
 local StateNode = class("StateNode", graph.Node)
+
+--- Constructor.
 function StateNode:__init(state, goal, action)
 	graph.Node.__init(self)
 	self.state = state
@@ -143,11 +154,13 @@ function StateNode:__init(state, goal, action)
 	self.action = action
 end
 
+--- Tests if we have found our goal state.
 function StateNode:found(node)
 	return node.goal:distance(node.state) == 0 and
 		self.goal:distance(node.state) == 0
 end
 
+--- Tests if the state node has unstaisified properties.
 function StateNode:unsatisfied()
 	return self.goal:unsatisfied(self.state)
 end
@@ -155,7 +168,10 @@ end
 --- @class GOAPGraph
 -- Describes the associate between States (nodes) and Actions (edges)
 -- allowing graph traversal algorithms to reason about these objects.
+-- @type GOAPGraph
 local GOAPGraph = class("GOAPGraph", graph.Graph)
+
+--- Constructor.
 function GOAPGraph:__init(agent, actions)
 	self.agent = agent
 	self.effect2actions = {}
@@ -232,10 +248,19 @@ end
 
 --- Converts the list of nodes returned by A* into an ordered plan
 -- of Action objects.
+-- @param G an instance of GOAPGraph
+-- @param worldstate the starting world state of an agent
+-- @param goal the desired world state
+-- @param h the heuristic function to use, default is a state distance
+-- calculation
+-- @param search the search algorithm to use, default is A*
+-- @param order boolean if true will sort the plan, this requires all
+-- actions to have the __lt methmethod set so table.sort can be used.
 -- @return: goal, plan, cost; where
 --   goal is the desired world state after including action preconditions
---   plan the set of actions to accomplish to goal
+--   plan the set of actions to accomplish goal
 --   cost of the plan
+--   otherwise if no plan found return nil
 local function find_plan(G, worldstate, goal, h, search, order)
 	local path, cost, plan
 	local start = StateNode(worldstate, goal, nil)

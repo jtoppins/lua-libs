@@ -165,7 +165,7 @@ describe("containers.RingBuffer", function()
 end)
 
 describe("containers.Graph", function()
-	local graph = dcsex.containers.Graph
+	local graph = dcsex.containers.graph
 
 	-- luacheck: ignore 311
 	test("test", function()
