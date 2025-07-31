@@ -7,6 +7,31 @@ max_cyclomatic_complexity = 10
 read_globals = {
 	-- common lua globals
 	"lfs",
+
+	-- DCS specific globals
+	"net",
+	"atmosphere",
+	"country",
+	"env",
+	"Unit",
+	"Object",
+	"StaticObject",
+	"Group",
+	"coalition",
+	"world",
+	"timer",
+	"trigger",
+	"missionCommands",
+	"coord",
+	"land",
+	"SceneryObject",
+	"AI",
+	"Controller",
+	"radio",
+	"Weapon",
+	"Airbase",
+
+	-- DCSEx specific
 	"dcsex",
 }
 

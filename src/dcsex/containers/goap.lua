@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
 local utils = require("dcsex.utils")
-local class = require("dcsex.classnamed")
+local class = require("dcsex.class")
 local graph = require("dcsex.containers.graph")
 local astar = require("dcsex.algorithms.search_astar")
 

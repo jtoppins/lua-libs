@@ -5,7 +5,6 @@ require("dcsex")
 
 local utils = dcsex.utils
 local class = dcsex.class
-local classnamed = dcsex.classnamed
 
 describe("libs", function()
 	test("verify", function()
@@ -16,7 +15,7 @@ end)
 
 describe("validate class", function()
 	test("verify basic operation", function()
-		local A = class()
+		local A = class("A")
 		function A:__init(v)
 			self.val = v
 			self.__name = "A"
@@ -26,7 +25,7 @@ describe("validate class", function()
 			return "A"
 		end
 
-		local B = class(A)
+		local B = class("B", A)
 		function B:__init(v)
 			A.__init(self, v)
 			self.__name = "B"
@@ -38,7 +37,7 @@ describe("validate class", function()
 			return s
 		end
 
-		local C = class(B)
+		local C = class("C", B)
 		function C:__init(v)
 			B.__init(self, v)
 			self.__name = "C"
@@ -50,7 +49,7 @@ describe("validate class", function()
 			return s
 		end
 
-		local J = class()
+		local J = class("J")
 
 		local a = A(2)
 		assert.is.equal(a:exec(), "A")
@@ -78,12 +77,12 @@ describe("validate class", function()
 			return a.cost == other.cost
 		end
 
-		local A = utils.override_ops(classnamed("A"), A_mt)
+		local A = utils.override_ops(class("A"), A_mt)
 		function A:__init(v)
 			self.cost = v
 		end
 
-		local B = classnamed("B", A)
+		local B = class("B", A)
 
 		local a = A(3)
 		local b = A(5)

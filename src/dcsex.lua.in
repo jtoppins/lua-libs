@@ -20,7 +20,6 @@ local libs = {
 	algorithms   = require(pkgname..".algorithms"),
 	check        = require(pkgname..".check"),
 	class        = require(pkgname..".class"),
-	classnamed   = require(pkgname..".classnamed"),
 	containers   = require(pkgname..".containers"),
 	IAUS         = require(pkgname..".IAUS"),
 	json         = require(pkgname..".json"),

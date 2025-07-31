@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("dcsex")
-local class = dcsex.classnamed
+local class = dcsex.class
 local goap = dcsex.containers.GOAP
 
 local ID = {
