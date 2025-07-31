@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local utils = require("dcsex.utils")
+local mytable = require("dcsex.table")
 
 --- Return a table object (`obj`) that emulates properties of a class.
 -- If the table defines an entry "__init" that is a function,
@@ -25,18 +25,18 @@ local utils = require("dcsex.utils")
 -- @param ... additional base classes to inherit methods from
 -- @return a class like object table
 local function class(name, base, ...)
-	local newcls = utils.shallowclone(base or {})
+	local newcls = mytable.shallowCopy(base or {})
 
 	for i = 1, select('#', ...) do
-		newcls = utils.mergetables(newcls,
-			utils.shallowclone(select(i, ...) or {}))
+		newcls = mytable.merge(newcls,
+			mytable.shallowCopy(select(i, ...) or {}))
 	end
 
 	local cls_mt = {
 		-- allow new object to be created directly,
 		-- example: o = Object()
 		__call = function(cls, ...)
-			local c = utils.shallowclone(cls)
+			local c = mytable.shallowCopy(cls)
 			c.__mt = nil
 			if cls.__mt ~= nil then
 				setmetatable(c, cls.__mt)

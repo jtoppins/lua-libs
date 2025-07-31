@@ -21,8 +21,13 @@ local libs = {
 	check        = require(pkgname..".check"),
 	class        = require(pkgname..".class"),
 	containers   = require(pkgname..".containers"),
+	error        = require(pkgname..".error"),
 	IAUS         = require(pkgname..".IAUS"),
+	io           = require(pkgname..".io"),
 	json         = require(pkgname..".json"),
+	math         = require(pkgname..".math"),
+	string       = require(pkgname..".string"),
+	table        = require(pkgname..".table"),
 	utils        = require(pkgname..".utils"),
 }
 
