@@ -21,6 +21,7 @@ local libs = {
 	check        = require(pkgname..".check"),
 	class        = require(pkgname..".class"),
 	containers   = require(pkgname..".containers"),
+	converter    = require(pkgname..".converter"),
 	error        = require(pkgname..".error"),
 	io           = require(pkgname..".io"),
 	json         = require(pkgname..".json"),
