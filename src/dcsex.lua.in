@@ -17,11 +17,13 @@ local libs = {
 	_COPYRIGHT   = "Copyright (c) 2019-2022,2024-2025 Jonathan Toppins",
 
 	-- Submodules
+	ai           = require(pkgname..".ai"),
 	algorithms   = require(pkgname..".algorithms"),
 	check        = require(pkgname..".check"),
 	class        = require(pkgname..".class"),
 	containers   = require(pkgname..".containers"),
 	converter    = require(pkgname..".converter"),
+	enum         = require(pkgname..".enum"),
 	error        = require(pkgname..".error"),
 	io           = require(pkgname..".io"),
 	json         = require(pkgname..".json"),
