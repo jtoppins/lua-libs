@@ -2,7 +2,7 @@
 
 --- Library for checking input values
 
-local utils = require("libs.utils")
+local utils = require("dcsex.utils")
 
 local check = {}
 function check.type(val, typestr, lvl)

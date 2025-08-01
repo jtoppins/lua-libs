@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local utils = require("libs.utils")
-local class = require("libs.classnamed")
+local utils = require("dcsex.utils")
+local class = require("dcsex.classnamed")
 
 local curveTypes = {
 	["LINEAR"]    = 1,

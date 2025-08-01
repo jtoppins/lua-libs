@@ -11,3 +11,4 @@
 
 # ignore generated files
 src/libs.lua
+src/dcsex.lua

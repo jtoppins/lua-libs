@@ -7,16 +7,16 @@ max_cyclomatic_complexity = 10
 read_globals = {
 	-- common lua globals
 	"lfs",
-	"libs",
+	"dcsex",
 }
 
-files["src/libs/json.lua"] = {
+files["src/dcsex/json.lua"] = {
 	max_cyclomatic_complexity = false,
 	max_line_length = false,
 	ignore = {"614", "411"},
 }
 
-files["src/libs/utils.lua"] = {
+files["src/dcsex/utils.lua"] = {
 	max_cyclomatic_complexity = 12,
 }
 

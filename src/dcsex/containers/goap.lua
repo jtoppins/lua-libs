@@ -1,9 +1,9 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local utils = require("libs.utils")
-local class = require("libs.classnamed")
-local graph = require("libs.containers.graph")
-local astar = require("libs.algorithms.search_astar")
+local utils = require("dcsex.utils")
+local class = require("dcsex.classnamed")
+local graph = require("dcsex.containers.graph")
+local astar = require("dcsex.algorithms.search_astar")
 
 local ANYHANDLE = {}
 

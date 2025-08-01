@@ -1,0 +1,34 @@
+-- SPDX-License-Identifier: LGPL-3.0
+
+-- Define the package name
+local pkgname = "dcsex"
+local _G      = _G
+
+-- Prevent duplicate loading
+if _G[pkgname] ~= nil then
+	error(string.format("package: `%s` already exists, skipping...",
+		pkgname))
+end
+
+-- Define the module table with submodules
+local libs = {
+	_VERSION     = "%VERSION%",
+	_DESCRIPTION = string.format("%s: DCS Extensions library.", pkgname),
+	_COPYRIGHT   = "Copyright (c) 2019-2022,2024-2025 Jonathan Toppins",
+
+	-- Submodules
+	algorithms   = require(pkgname..".algorithms"),
+	check        = require(pkgname..".check"),
+	class        = require(pkgname..".class"),
+	classnamed   = require(pkgname..".classnamed"),
+	containers   = require(pkgname..".containers"),
+	IAUS         = require(pkgname..".IAUS"),
+	json         = require(pkgname..".json"),
+	utils        = require(pkgname..".utils"),
+}
+
+-- Register the module in the global environment
+_G[pkgname] = libs
+
+-- Return the module table for use in requiring scripts
+return libs

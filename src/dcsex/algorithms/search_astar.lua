@@ -2,9 +2,9 @@
 
 --- Defines an A* search algorithm
 
-local check = require("libs.check")
-local PriorityQueue = require("libs.containers.pqueue")
-local Queue = require("libs.containers.queue")
+local check = require("dcsex.check")
+local PriorityQueue = require("dcsex.containers.pqueue")
+local Queue = require("dcsex.containers.queue")
 
 local function search_astar(graph, start, goal, heuristic)
 	-- check inputs

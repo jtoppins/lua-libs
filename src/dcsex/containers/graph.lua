@@ -2,7 +2,7 @@
 
 -- Basic Graph container
 
-local class = require("libs.classnamed")
+local class = require("dcsex.classnamed")
 
 local errno = {
 	ENONE     = 0,  -- no error

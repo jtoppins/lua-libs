@@ -1,9 +1,9 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("os")
-require("libs")
+require("dcsex")
 
-local utils = libs.utils
+local utils = dcsex.utils
 
 describe("validate utils", function()
 	test("sortedpairs", function()

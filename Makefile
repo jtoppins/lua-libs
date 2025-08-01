@@ -77,7 +77,7 @@ export LUACHECK_OPTS
 quiet_cmd_rmfiles = CLEAN  $(rm-files)
       cmd_rmfiles = rm -rf $(rm-files)
 
-generated_files := src/libs.lua
+generated_files := src/dcsex.lua
 rm-files := $(generated_files)
 install-targets = lib_install
 

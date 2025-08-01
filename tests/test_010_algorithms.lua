@@ -1,10 +1,10 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("os")
-require("libs")
+require("dcsex")
 
-local graph = libs.containers.Graph
-local search_astar = libs.algorithms.search_astar
+local graph = dcsex.containers.Graph
+local search_astar = dcsex.algorithms.search_astar
 
 describe("algorithms", function()
 	test("A* search", function()

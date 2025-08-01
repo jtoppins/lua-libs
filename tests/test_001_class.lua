@@ -1,16 +1,16 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("os")
-require("libs")
+require("dcsex")
 
-local utils = libs.utils
-local class = libs.class
-local classnamed = libs.classnamed
+local utils = dcsex.utils
+local class = dcsex.class
+local classnamed = dcsex.classnamed
 
 describe("libs", function()
 	test("verify", function()
-		assert(_G["libs"] ~= nil)
-		assert(libs.class ~= nil)
+		assert(_G["dcsex"] ~= nil)
+		assert(dcsex.class ~= nil)
 	end)
 end)
 

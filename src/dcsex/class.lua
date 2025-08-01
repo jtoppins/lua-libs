@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local utils = require("libs.utils")
+local utils = require("dcsex.utils")
 
 local function class(base, ...)
 	local newcls = utils.shallowclone(base or {})
