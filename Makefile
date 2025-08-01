@@ -52,7 +52,7 @@ cmd = $(if $(Q),@set -e; echo "$(quiet_cmd_$(1))"; $(cmd_$(1)),$(cmd_$(1)))
 
 # prefix is used to change the install target
 INSTALLPREFIX := $(if $(PREFIX), "$(PREFIX)"/,)
-LIBS_VERSION  ?= $(shell git describe)
+PROJ_VERSION  ?= $(shell git describe)
 
 LUA_PATH := $(CURDIR)/src/?.lua;;
 export LUA_PATH
@@ -70,25 +70,22 @@ LUACHECK_OPTS         = $(if $(Q),-q)
 LUATESTS              = busted
 TZ                    = "UTC 0"
 
-export PREFIX LIBS_VERSION
+export PREFIX PROJ_VERSION
 export INSTALL INSTALLFLAGS ZIP TAR SED LUA LUACC LUACHECK LUABUSTED TZ
 export LUACHECK_OPTS
 
 quiet_cmd_rmfiles = CLEAN  $(rm-files)
       cmd_rmfiles = rm -rf $(rm-files)
 
-quiet_cmd_genfile = GEN    $@
-      cmd_genfile = \
-		$(SED) -e "s:%VERSION%:$(LIBS_VERSION):" $< > $@
+generated_files := src/libs.lua
+rm-files := $(generated_files)
+install-targets = lib_install
 
 PHONY += all
 __all: all
 
 PHONY += all
 all: generated
-
-generated_files := src/libs.lua
-rm-files := $(generated_files)
 
 PHONY += generated
 generated: $(generated_files)
@@ -98,13 +95,14 @@ check: syntax tests
 
 syntax: generated
 	$(Q)$(LUACHECK) $(LUACHECK_OPTS) src tests
+	$(Q)git diff --check
 
 tests: generated
 	$(Q)(cd tests; busted)
 
-PHONY += clean
-clean:
-	$(call cmd,rmfiles)
+PHONY += docs
+docs: generated
+	@echo 'not implemented yet.'
 
 PHONY += help
 help:
@@ -113,6 +111,18 @@ help:
 	@echo '  check        - Run all unit tests and syntax checks'
 	@echo '  syntax       - Run luacheck lint checker'
 	@echo '  tests        - Run unit tests'
+	@echo '  docs         - Build documentation'
+
+PHONY += clean
+clean:
+	$(call cmd,rmfiles)
+
+quiet_cmd_rmfiles = CLEAN  $(rm-files)
+      cmd_rmfiles = rm -rf $(rm-files)
+
+quiet_cmd_genfile = GEN    $@
+      cmd_genfile = \
+		$(SED) -e "s:%VERSION%:$(PROJ_VERSION):" $< > $@
 
 $(generated_files): %.lua: %.lua.in
 	$(call cmd,genfile)

@@ -1,3 +1,7 @@
 #!/bin/sh
 
-apt install -y make lua5.1 lua-filesystem lua-check lua-busted
+set -e
+set -u
+
+sudo apt install -y make bash-completion \
+	lua5.1 lua-filesystem lua-check lua-busted
