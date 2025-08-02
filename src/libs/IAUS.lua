@@ -37,7 +37,7 @@ function Axis:__init(input, curve, m, k, b, c)
 	if self.curvetype == curveTypes.LINEAR or
 	   self.curvetype == curveTypes.QUADRATIC then
 		self.calc = linear
-	elseif self.curvetype == curveTypes.LOGICTIC then
+	elseif self.curvetype == curveTypes.LOGISTIC then
 		self.calc = logistic
 	end
 end
