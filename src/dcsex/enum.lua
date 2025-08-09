@@ -7,6 +7,14 @@
 
 local _t = {}
 
+_t.CARRIER_ILLUM_MODE = {
+	["OFF"]      = -2,
+	["AUTO"]     = -1,
+	["NAV"]      = 0,
+	["LAUNCH"]   = 1,
+	["RECOVERY"] = 2,
+}
+
 _t.TASKTYPE = {
 	["COMMAND"] = 1,
 	["OPTION"]  = 2,

@@ -35,6 +35,7 @@ local libs = {
 	utils        = require(pkgname..".utils"),
 	utility      = require(pkgname..".utility"),
 	vector       = require(pkgname..".vector"),
+	world        = require(pkgname..".world"),
 }
 
 -- Register the module in the global environment
