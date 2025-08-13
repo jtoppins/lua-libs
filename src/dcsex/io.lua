@@ -6,10 +6,99 @@ local mylfs = require("lfs")
 local mystring = require("dcsex.string")
 local mytable = require("dcsex.table")
 
+local ziptype = {
+	["MINIZIP"] = 1,
+	["LUAZIP"]  = 2,
+}
+
+local ztype = ziptype.MINIZIP
+local ok, zip = pcall(require, "minizip")
+if not ok then
+	ztype = ziptype.LUAZIP
+	ok, zip = pcall(require, "zip")
+	assert(ok, "require: unable to load zip library")
+end
+
+--- Extract all files using minizip, exit on first error.
+-- luacheck: ignore 212
+local function minizip_extract(z, ...)
+	local tbl = {}
+
+	for _, filename in ipairs(arg) do
+		local result
+
+		local str = z:extract(filename)
+		local f, err = loadstring(str)
+		if not f then
+			return nil, err
+		end
+
+		setfenv(f, tbl)
+		result, err = pcall(f)
+		if not result then
+			return nil, err
+		end
+	end
+
+	return tbl
+end
+
+--- Extract all files using luazip, exit on first error.
+local function luazip_extract(z, ...)
+	local tbl = {}
+
+	for _, filename in ipairs(arg) do
+		local file, f, result, err
+
+		file, err = z:open(filename)
+		if not file then
+			return nil, err
+		end
+
+		local str = file:read("*a")
+		file:close()
+		f, err = loadstring(str)
+		if not f then
+			return nil, err
+		end
+
+		setfenv(f, tbl)
+		result, err = pcall(f)
+		if not result then
+			return nil, err
+		end
+	end
+
+	return tbl
+end
+
 local _t = {}
 
 --- returns the directory seperator used for the given OS
 _t.pathSeperator = package.config:sub(1,1)
+
+--- Extract the specified files from the zip archive and convert them
+-- to a lua table.
+-- @param zippath file path to target zip file
+-- @param ... varadic list of file names to extract from the zip file
+-- @return merged table
+function _t.extract(zippath, ...)
+	local z, errmsg = zip.open(zippath)
+	local tbl, err
+
+	if not z then
+		return nil, errmsg
+	end
+
+	if ziptype.MINIZIP == ztype then
+		tbl, err = minizip_extract(z, ...)
+	elseif ziptype.LUAZIP == ztype then
+		tbl, err = luazip_extract(z, ...)
+	end
+	z:close()
+
+	return tbl, err
+end
 
 --- Join all directory paths provided in the parameter list.
 -- @param ... varadic argument list of strings
