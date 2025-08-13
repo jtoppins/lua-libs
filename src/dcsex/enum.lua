@@ -7,6 +7,20 @@
 
 local _t = {}
 
+local tacan = {}
+tacan.CHANNEL = {
+	["MIN"] = 1,
+	["MAX"] = 126,
+}
+
+tacan.GND = {
+	["BASE_X"]   = 961,
+	["BASE_Y"]   = 1087,
+	["BASE_INV"] = 64,
+}
+
+_t.TACAN = tacan
+
 _t.CARRIER_ILLUM_MODE = {
 	["OFF"]      = -2,
 	["AUTO"]     = -1,

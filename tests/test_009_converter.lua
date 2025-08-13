@@ -127,6 +127,13 @@ local testvec = {
 		result = 288.15,
 		tolerance = 0.001,
 		tostring = "288.15 °K",
+	}, {
+		from = "khz",
+		to = "mhz",
+		value = 10000,
+		result = 10,
+		tolerance = 0.00001,
+		tostring = "10.00 MHz",
 	},
 }
 

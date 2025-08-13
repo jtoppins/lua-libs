@@ -80,7 +80,7 @@ function _t.createTACAN(unit, callsign, channel, mode,
 			name, aa, bearing, mobile)
 	local bcntype = enum.BEACON.TYPE.TACAN
 	local system = enum.BEACON.SYSTEM.TACAN
-	local freq = dct.ai.Tacan.getFrequency(channel, mode)
+	local freq = dcsex.tacan.frequency(channel, mode)
 	local extra = {}
 
 	extra.channel = channel

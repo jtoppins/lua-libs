@@ -157,6 +157,7 @@ _t.measure = {
 	["PRESSURE"]    = 4,
 	["TEMPERATURE"] = 5,
 	["COORDINATES"] = 6,
+	["FREQUENCY"]   = 7,
 }
 
 --- Convert between units of measure.
@@ -349,5 +350,8 @@ assert(_t.register("fahrenheit", _t.measure.TEMPERATURE,
 assert(_t.register("kg"    , _t.measure.MASS, nil, nil, "Kg"))
 assert(_t.register("g"     , _t.measure.MASS, 1000, 1/1000, "g"))
 assert(_t.register("lbs"   , _t.measure.MASS, 2.204623, 1/2.204623, "lbs"))
+assert(_t.register("hz"    , _t.measure.FREQUENCY, nil, nil, "Hz"))
+assert(_t.register("khz"   , _t.measure.FREQUENCY, 1/1000, 1000, "KHz"))
+assert(_t.register("mhz"   , _t.measure.FREQUENCY, 1/1000000, 1000000, "MHz"))
 
 return _t

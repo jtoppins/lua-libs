@@ -31,6 +31,7 @@ local libs = {
 	math         = require(pkgname..".math"),
 	string       = require(pkgname..".string"),
 	table        = require(pkgname..".table"),
+	tacan        = require(pkgname..".tacan"),
 	Timer        = require(pkgname..".Timer"),
 	utils        = require(pkgname..".utils"),
 	utility      = require(pkgname..".utility"),
