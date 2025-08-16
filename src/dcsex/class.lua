@@ -37,6 +37,7 @@ local function class(name, base, ...)
 		-- example: o = Object()
 		__call = function(cls, ...)
 			local c = mytable.shallowCopy(cls)
+			c._props = mytable.deepCopy(newcls._props)
 			c.__mt = nil
 			if cls.__mt ~= nil then
 				setmetatable(c, cls.__mt)
@@ -50,6 +51,9 @@ local function class(name, base, ...)
 			return string.format("class(%s)", cls.__clsname)
 		end
 	}
+
+	-- All property setter information stored here
+	newcls._props = newcls._props or {}
 
 	function newcls:super()
 		return base
@@ -69,12 +73,71 @@ local function class(name, base, ...)
 		return b_isa
 	end
 
+	function newcls:_property(propName, value, set, setAfter)
+		local props = rawget(self, "_props")
+		props[propName] = {
+			["value"] = value
+		}
+
+		if set ~= nil and type(set) == "function" then
+			self._props[propName].set = set
+		end
+
+		if setAfter ~= nil and type(set) == "function" then
+			self._props[propName].setAfter = setAfter
+		end
+	end
+
 	newcls.__clsname = name or tostring(newcls)
 	if newcls.__mt == nil then
 		newcls.__mt = {
 			__tostring = function(c)
 				return string.format("instance(%s)",
 					c.__clsname)
+			end,
+
+			-- Support generic getters for class properties.
+			-- Called when `key` doesn't exist in `self`. This
+			-- means if `key` doesn't exist in the props table
+			-- we can return nil otherwise return any value
+			-- stored in `self._props[key].value`.
+			__index = function(self, key)
+				local props = rawget(self, "_props")
+				local pt = props[key]
+
+				if pt == nil then
+					return nil
+				end
+				return pt.value
+			end,
+
+			-- Support setters for class properties.
+			-- Called when `key` doesn't exist in `self`. This
+			-- means `key` is a property we need to store its
+			-- value in the _props table so that __index will
+			-- continue to get called.
+			__newindex = function(self, key, value)
+				local props = rawget(self, "_props")
+				local pt = props[key]
+
+				if pt ~= nil then
+					local oldval = pt.value
+
+					if pt.set ~= nil then
+						value = pt.set(self, key,
+							value, oldval)
+					end
+
+					pt.value = value
+
+					if pt.setAfter ~= nil then
+						pt.setAfter(self, key,
+							    value, oldval)
+					end
+				else
+					-- not a property bypass __newindex
+					rawset(self, key, value)
+				end
 			end,
 		}
 	end

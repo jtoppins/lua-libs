@@ -1,73 +1,205 @@
 #!/usr/bin/lua
 require('busted.runner')()
-require("os")
 require("dcsex")
 
-local utils = dcsex.utils
-local class = dcsex.class
-
-describe("libs", function()
-	test("verify", function()
+describe("dcsex library", function()
+	test("exports correctly", function()
 		assert(_G["dcsex"] ~= nil)
 		assert(dcsex.class ~= nil)
 	end)
 end)
 
-describe("validate class", function()
-	test("verify basic operation", function()
+local utils = dcsex.utils
+local class = dcsex.class
+
+describe("class() function", function()
+	test("has some default methods", function()
+		local A = class()
+		assert.is_function(A.super)
+		assert.is_function(A.isa)
+		assert.is_function(A._property)
+	end)
+
+	test("can name the class", function()
 		local A = class("A")
-		function A:__init(v)
-			self.val = v
-			self.__name = "A"
+		assert.equal("A", A.__clsname)
+		assert.equal("class(A)", tostring(A))
+	end)
+end)
+
+describe("instances", function()
+	test("can be created with __call()", function()
+		local A = class()
+		local a = A()
+		assert.is_table(a)
+	end)
+
+	test("are equal", function()
+		local A = class()
+		local a = A()
+		local b = A()
+		assert.same(a, b)
+	end)
+
+	test("are independent", function()
+		local A = class("A", {key = "value"})
+		local a = A()
+		local b = A()
+		b.key = "other value"
+		assert.equal("other value", b.key)
+		assert.equal("value", a.key)
+	end)
+end)
+
+describe("constructors", function()
+	test("can be defined by __init()", function()
+		local A = class("A", { value = 0 })
+		function A:__init(val)
+			self.value = val
 		end
-		function A:exec()
-			self.val = self.val + 1
-			return "A"
+
+		local a = A(3)
+		assert.equal(3, a.value)
+	end)
+end)
+
+describe("inheritance", function()
+	test("provides an is-a relationship", function()
+		local A = class("A")
+		local B = class("B", A)
+		local b = B()
+
+		assert.is_true(b:isa(A))
+	end)
+
+	test("gets methods from super", function()
+		local A = class("A")
+		function A:foo()
+			return "foo"
 		end
 
 		local B = class("B", A)
-		function B:__init(v)
-			A.__init(self, v)
-			self.__name = "B"
-		end
-		function B:exec()
-			local s = ""
-			s = s .. A.exec(self)
-			s = s .. "B"
-			return s
-		end
-
-		local C = class("C", B)
-		function C:__init(v)
-			B.__init(self, v)
-			self.__name = "C"
-		end
-		function C:exec()
-			local s = ""
-			s = s .. B.exec(self)
-			s = s .. "C"
-			return s
-		end
-
-		local J = class("J")
-
-		local a = A(2)
-		assert.is.equal(a:exec(), "A")
-		assert.is.equal(a.val, 3)
-
-		local b = B(3)
-		assert.is.equal(b:exec(), "AB")
-		assert.is.equal(b.val, 4)
-		assert.is.equal(a.val, 3)
-
-		local c = C(5)
-		assert.is.equal(c:exec(), "ABC")
-		assert(c:isa(C))
-		assert(c:isa(A))
-		assert(not c:isa(J))
+		local b = B()
+		assert.is_function(b.foo)
+		assert.equal("foo", b:foo())
 	end)
 
-	test("verify metatable", function()
+	test("provides multiple inheritance", function()
+		local A = class("A")
+		function A:foo()
+			return "foo"
+		end
+
+		local B = class("B", A)
+		function B:bar()
+			return "bar"
+		end
+
+		local C = class("C", A, B)
+		local c = C()
+		assert.is_function(c.foo)
+		assert.is_function(c.bar)
+		assert.equal("bar", c:bar())
+	end)
+
+	test("supports overriding methods", function()
+		local A = class("A")
+		function A:foo()
+			return 1
+		end
+
+		local B = class("B", A)
+		function B:foo()
+			return 1 + A.foo(self)
+		end
+
+		local b = B()
+		assert.equal(2, b:foo())
+	end)
+end)
+
+describe("property getters", function()
+	test("return values", function()
+		local A = class("A")
+		function A:__init()
+			self:_property("a", 1)
+		end
+
+		local a = A()
+		assert.equal(1, a.a)
+		-- verify 'a' doesn't exist as a key in the table
+		assert.equal(nil, rawget(a, "a"))
+	end)
+end)
+
+describe("property setters", function()
+	test("use values", function()
+		local A = class("A")
+		function A:__init()
+			self:_property("foo", 2)
+		end
+
+		local a = A()
+		a.foo = "something else"
+		assert.equal("something else", a.foo)
+	end)
+
+	test("use results of set function", function()
+		local A = class("A")
+		function A:__init()
+			self:_property("foo", 2, function() return "bar" end)
+		end
+
+		local a = A()
+		a.foo = "something else"
+		assert.equal("bar", a.foo)
+	end)
+
+	test("pass new value, `value` to set function", function()
+		local A = class("A")
+		function A:__init()
+			self:_property("foo", 2,
+				function(_, _, new, old)
+					return new .. old
+				end)
+		end
+
+		local a = A()
+		a.foo = "bar"
+		assert.equal("bar2", a.foo)
+	end)
+
+	test("sets 'value'", function()
+		local A = class("A")
+		function A:__init()
+			self:_property("foo", 2,
+				function(_, _, new) return new end)
+		end
+
+		local a = A()
+		a.foo = "bar2"
+		assert.equal("bar2", a.foo)
+	end)
+
+	test("can use a callback", function()
+		local b = 1
+		local A = class("A")
+		function A:__init()
+			self:_property("foo", 2,
+				function(_, _, new) return new end,
+				function() b = 2 end)
+		end
+
+		local a = A()
+		a.foo = "bar2"
+		assert.equal("bar2", a.foo)
+		assert.equal(2, b)
+	end)
+
+end)
+
+describe("instance metamethods", function()
+	test("can set/override", function()
 		local A_mt = {}
 		function A_mt.__lt(a, other)
 			return a.cost < other.cost
@@ -93,27 +225,8 @@ describe("validate class", function()
 		assert(a >= c)
 		assert(b > c)
 		assert(a == d)
-		assert(type(getmetatable(d).__lt) == "function")
-		assert(type(getmetatable(d).__eq) == "function")
-		assert(type(getmetatable(a).__eq) == "function")
-	end)
-
-	test("callable", function()
-		local function callable(cls)
-			local inst = {}
-			setmetatable(inst, { __index = cls })
-			return inst
-		end
-
-		local A = {
-			__call = callable,
-		}
-		setmetatable(A, A)
-
-		local B = {}
-		setmetatable(B, { __call = callable })
-
-		A()
-		B()
+		assert.is_function(getmetatable(d).__lt)
+		assert.is_function(getmetatable(d).__eq)
+		assert.is_function(getmetatable(a).__eq)
 	end)
 end)
