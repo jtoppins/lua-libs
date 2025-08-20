@@ -41,10 +41,6 @@ files["src/dcsex/json.lua"] = {
 	ignore = {"614", "411"},
 }
 
-files["src/dcsex/utils.lua"] = {
-	max_cyclomatic_complexity = 12,
-}
-
 files["tests/*"] = {
 	ignore = {"143", },
 	globals = {
