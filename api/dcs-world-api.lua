@@ -6,6 +6,9 @@ Generated on: 2025-05-25T17:18:57.070587
 
 ---@meta
 
+local function emptyfunc()
+end
+
 -- Global Namespaces and Classes
 --- Provides functions for logging and accessing mission environment data in the DCS World scripting environment. All logging messages are written to the dcs.log file in the user's Saved Games folder.
 ---@class env
@@ -356,6 +359,26 @@ function timer.setFunctionTime(functionId, modelTime) end
 ---@field action table Contains functions that perform mission actions equivalent to Mission Editor trigger actions.
 ---@field misc table Contains utility functions for trigger operations and flag management.
 trigger = trigger or {}
+trigger.action = {}
+trigger.action.markToCoalition = emptyfunc
+trigger.action.markToGroup = emptyfunc
+trigger.action.markToAll = emptyfunc
+trigger.action.removeMark = emptyfunc
+trigger.action.markupToAll = emptyfunc
+trigger.action.lineToAll = emptyfunc
+trigger.action.circleToAll = emptyfunc
+trigger.action.rectToAll = emptyfunc
+trigger.action.quadToAll = emptyfunc
+trigger.action.textToAll = emptyfunc
+trigger.action.arrowToAll = emptyfunc
+trigger.action.setMarkupRadius = emptyfunc
+trigger.action.setMarkupText = emptyfunc
+trigger.action.setMarkupFontSize = emptyfunc
+trigger.action.setMarkupColor = emptyfunc
+trigger.action.setMarkupColorFill = emptyfunc
+trigger.action.setMarkupTypeLine = emptyfunc
+trigger.action.setMarkupPositionEnd = emptyfunc
+trigger.action.setMarkupPositionStart = emptyfunc
 
 --- Provides functions for querying atmospheric conditions in the DCS World environment, including wind, temperature, and pressure data.
 ---@class atmosphere
@@ -2213,6 +2236,7 @@ trigger.flareColor = {
     Yellow = 3
 }
 
+--[[
 MarkupShapeId = MarkupShapeId or {}
 --- Enumerator for markup geometric shape types, used with trigger.action.markupToAll to create map annotations.
 ---@version 2.5.6
@@ -2264,6 +2288,7 @@ RadioModulation = {
     AM = 0,
     FM = 1
 }
+--]]
 
 --- Defines the structure of a Lua table representing a color with red, green, blue, and alpha components, each normalized between 0.0 and 1.0.
 --- (Data structure definition for ColorRGBA. Not a globally accessible table.)
@@ -2293,6 +2318,7 @@ RadioModulation = {
 ---@field y number Y coordinate, which represents the elevation direction in the DCS World coordinate system. Up is positive, Down is negative.
 ---@field z number Z coordinate, which represents the east-west direction in the DCS World coordinate system. East is positive, West is negative.
 
+--[[
 Callsigns_JTAC = Callsigns_JTAC or {}
 --- Enumerator for Joint Terminal Attack Controller (JTAC) callsigns, used to identify JTAC units in communications and mission planning.
 ---@version 1.2.4
@@ -2318,6 +2344,7 @@ Callsigns_JTAC = {
     Mantis = 18,
     Badger = 19
 }
+--]]
 
 --- Defines the structure of a Lua table representing a group to be spawned with coalition.addGroup or coalition.add_dyn_group functions.
 --- (Data structure definition for GroupSpawnData. Not a globally accessible table.)
@@ -2620,6 +2647,7 @@ AI.Option.Naval.val.ROE = {
     WEAPON_HOLD = 4
 }
 
+--[[
 FormationType = FormationType or {}
 --- Enumerator for all formation patterns used across different AI unit types.
 ---@version 1.2.0
@@ -2648,6 +2676,7 @@ FormationType = {
     GROUND_CONE = "Cone",
     GROUND_DIAMOND = "Diamond"
 }
+--]]
 
 Unit.Category = Unit.Category or {}
 --- Enumerator for unit categories, used to classify entities by their basic type and operational domain.
@@ -2840,6 +2869,7 @@ Weapon.flag = {
     AllWeapon = -1
 }
 
+--[[
 Attributes = Attributes or {}
 --- Enumerator for unit capability and classification attributes, used to identify unit properties and targeting criteria in the DCS World.
 ---@version 2.5.0
@@ -2952,6 +2982,7 @@ Attributes = {
     Bomb = "Bomb",
     Missile = "Missile"
 }
+--]]
 
 --- Defines the structure of a Lua table representing geographical coordinates using latitude and longitude values.
 --- (Data structure definition for LatLon. Not a globally accessible table.)
@@ -2960,6 +2991,7 @@ Attributes = {
 ---@field lat number Latitude value in decimal degrees, with positive values representing north of the equator and negative values representing south.
 ---@field lon number Longitude value in decimal degrees, with positive values representing east of the prime meridian and negative values representing west.
 
+--[[
 BeaconType = BeaconType or {}
 --- Enumerator for types of beacons that can be activated.
 ---@version 1.2.4
@@ -2996,6 +3028,7 @@ BeaconSystemName = {
     ILS_GLIDESLOPE = 6,
     BROADCAST_STATION = 7
 }
+--]]
 
 --- Defines the structure of a Lua table representing an event handler object that can be registered with world.addEventHandler.
 --- (Data structure definition for EventHandlerTable. Not a globally accessible table.)
@@ -3290,6 +3323,7 @@ country.name = {
 ---@field attackQty number Number of attack passes the group will perform on the target.
 ---@field groupAttack boolean Determines whether each aircraft in the group will attack individually (true) or as a coordinated unit (false).
 
+--[[
 TaskId = TaskId or {}
 --- Enumerator for task identifiers used to assign specific behaviors to Controller entities in the DCS World.
 ---@enum TaskId
@@ -3318,6 +3352,7 @@ TaskId = {
     TaskGroundEscort = "groundEscort",
     TaskRecoveryTanker = "RecoveryTanker"
 }
+--]]
 
 --- Parameters for the BombingRunway task
 --- (Data structure definition for TaskBombingRunwayParams. Not a globally accessible table.)
@@ -3403,6 +3438,7 @@ TaskId = {
 --- (Data structure definition for TaskEnRouteAWACSParams. Not a globally accessible table.)
 ---@class TaskEnRouteAWACSParams
 
+--[[
 TaskEnRouteId = TaskEnRouteId or {}
 --- Enumerator for en-route task identifiers that can be assigned to Controller entities but are not globally accessible.
 ---@enum TaskEnRouteId
@@ -3417,6 +3453,7 @@ TaskEnRouteId = {
     TaskEnRouteFACEngageGroup = "FAC_engageGroup",
     TaskEnRouteFAC = "FAC"
 }
+--]]
 
 --- Defines the structure of a Lua table containing parameters for the engageUnit task.
 --- (Data structure definition for TaskEnRouteEngageUnitParams. Not a globally accessible table.)
@@ -3547,6 +3584,7 @@ TaskEnRouteId = {
 ---@class CommandSetInvisibleParams
 ---@field value boolean Invisibility state where true makes the group undetectable by enemy AI, false restores normal detection.
 
+--[[
 CommandId = CommandId or {}
 --- Enumerator for command identifiers that can be sent to Controller entities, used to specify the type of command being issued.
 ---@enum CommandId
@@ -3576,6 +3614,7 @@ CommandId = {
     CommandDeactivateACLS = "DeactivateACLS",
     CommandLoadingShip = "LoadingShip"
 }
+--]]
 
 --- Defines the structure of a Lua table containing parameters for the ship cargo loading command.
 --- (Data structure definition for CommandLoadingShipParams. Not a globally accessible table.)
@@ -3704,6 +3743,7 @@ Controller.Detection = {
     DLINK = 32
 }
 
+--[[
 LiquidType = LiquidType or {}
 --- Enumerator for liquid fuel types, used to specify particular fuels within a `Warehouse` inventory.
 ---@enum LiquidType
@@ -3713,6 +3753,7 @@ LiquidType = {
     MW50 = 2,
     Diesel = 3
 }
+--]]
 
 StaticObject.Category = StaticObject.Category or {}
 --- Defines the categories of static objects in the DCS World environment.

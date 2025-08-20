@@ -30,6 +30,10 @@ read_globals = {
 	"radio",
 	"Weapon",
 	"Airbase",
+	"VoiceChat",
+	"Disposition",
+	"Spot",
+	"Warehouse",
 
 	-- DCSEx specific
 	"dcsex",
@@ -50,5 +54,6 @@ files["tests/*"] = {
 		"pending",
 		"before_each",
 		"insulate",
+		"mock",
 	},
 }

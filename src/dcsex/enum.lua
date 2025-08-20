@@ -7,6 +7,14 @@
 
 local _t = {}
 
+_t.coalition = {
+	["ALL"]       = -1,
+	["NEUTRAL"]   = coalition.side.NEUTRAL,
+	["RED"]       = coalition.side.RED,
+	["BLUE"]      = coalition.side.BLUE,
+	["CONTESTED"] = 3,
+}
+
 local tacan = {}
 tacan.CHANNEL = {
 	["MIN"] = 1,
@@ -20,6 +28,26 @@ tacan.GND = {
 }
 
 _t.TACAN = tacan
+
+_t.MARKUP = {}
+_t.MARKUP.LINETYPE = {
+	["NOLINE"]   = 0,
+	["SOLID"]    = 1,
+	["DASHED"]   = 2,
+	["DOTTED"]   = 3,
+	["DOTDASH"]  = 4,
+	["LONGDASH"] = 5,
+	["TWODASH"]  = 6,
+}
+_t.MARKUP.SHAPE = {
+	["LINE"]     = 1,
+	["CIRCLE"]   = 2,
+	["RECT"]     = 3,
+	["ARROW"]    = 4,
+	["TEXT"]     = 5,
+	["QUAD"]     = 6,
+	["FREEFORM"] = 7,
+}
 
 _t.CARRIER_ILLUM_MODE = {
 	["OFF"]      = -2,
