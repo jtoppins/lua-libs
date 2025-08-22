@@ -6,6 +6,8 @@ Generated on: 2025-05-25T17:18:57.070587
 
 ---@meta
 
+--- stub function to build out the functions missing from this
+-- definition
 local function emptyfunc()
 end
 
@@ -1783,6 +1785,26 @@ Unit = Unit or {}
 ---@version 1.2.0
 ---@return boolean
 function Unit:isActive() end
+
+--- unknown
+--- @version unknown
+--- @return unknown
+function Unit:isAlive() end
+
+--- unknown
+--- @version unknown
+--- @return unknown
+function Unit:isBroken() end
+
+--- unknown
+--- @version unknown
+--- @return unknown
+function Unit:isDead() end
+
+--- unknown
+--- @version unknown
+--- @return unknown
+function Unit:isEffective() end
 
 --- Returns the `string` name of the player controlling this unit, or `nil` if AI-controlled.
 ---@version 1.2.4

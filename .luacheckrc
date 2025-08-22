@@ -39,6 +39,40 @@ read_globals = {
 	"dcsex",
 }
 
+files["api/*"] = {
+	max_cyclomatic_complexity = false,
+	max_line_length = false,
+	ignore = {"212", "614",},
+	globals = {
+		-- DCS specific globals
+		"net",
+		"atmosphere",
+		"country",
+		"env",
+		"Unit",
+		"Object",
+		"StaticObject",
+		"Group",
+		"coalition",
+		"world",
+		"timer",
+		"trigger",
+		"missionCommands",
+		"coord",
+		"land",
+		"SceneryObject",
+		"AI",
+		"Controller",
+		"radio",
+		"Weapon",
+		"Airbase",
+		"VoiceChat",
+		"Disposition",
+		"Spot",
+		"Warehouse",
+	},
+}
+
 files["src/dcsex/json.lua"] = {
 	max_cyclomatic_complexity = false,
 	max_line_length = false,

@@ -2,7 +2,7 @@ local busted = {}
 
 busted._all = {
 	lua = "/usr/bin/lua5.1",
-	lpath = "../src/?.lua",
+	lpath = "../api/?.lua;../src/?.lua",
 	helper = "../api/dcs-world-api.lua",
 	output = "plainTerminal",
 	pattern = "test_",
