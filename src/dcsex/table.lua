@@ -123,7 +123,7 @@ function _t.foreachProtectedCall(tbl, iterator, func, logger, ...)
 		logger:debug("calling: %s.%s", tostring(obj), func)
 		ok, errmsg = pcall(obj[func], obj, ...)
 		if not ok then
-			dcsex.error.errhandler(errmsg, logger, 2)
+			dcsex.env.errhandler(errmsg, logger, 2)
 		end
 	end
 end

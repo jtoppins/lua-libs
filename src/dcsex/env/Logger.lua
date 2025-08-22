@@ -1,11 +1,5 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
--- =============================================
--- Logger - a logger class
---
--- ex.Logger
--- =============================================
-
 local class = require("dcsex.class")
 
 local _loggers = {}
@@ -17,6 +11,8 @@ local _settings = {
 	logger      = {},
 }
 
+--- Logger. A logger class.
+-- @classmod dcsex.env.Logger
 local Logger = class("Logger")
 
 --- Logger logging level.

@@ -93,7 +93,7 @@ function _t.execute(controller, tasklist, taskfunc)
 		if handler ~= nil then
 			handler(controller, task.data)
 		else
-			dcsex.Logger.getByName("DCSEX"):error(
+			dcsex.env.Logger.getByName("DCSEX"):error(
 				"no handler found for task type: "..
 				tostring(task.type))
 		end
