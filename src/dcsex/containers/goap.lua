@@ -17,8 +17,7 @@ function propmt.__eq(self, other)
 		self.value == ANYHANDLE or other.value == ANYHANDLE)
 end
 
---- @class Property
--- Provides a common interface for representing an agent centric
+--- Provides a common interface for representing an agent centric
 -- symbolic state.
 -- @type Property
 local Property = utils.override_ops(class("world-property"), propmt)
@@ -39,8 +38,7 @@ function Property:copy()
 	return Property(self.id, self.value)
 end
 
---- @class WorldState
--- Is a set of Property objects with the set representing a particular
+--- Is a set of Property objects with the set representing a particular
 -- state.
 -- @type WorldState
 local WorldState = class("WorldState")
@@ -165,8 +163,7 @@ function StateNode:unsatisfied()
 	return self.goal:unsatisfied(self.state)
 end
 
---- @class GOAPGraph
--- Describes the associate between States (nodes) and Actions (edges)
+--- Describes the association between States (nodes) and Actions (edges)
 -- allowing graph traversal algorithms to reason about these objects.
 -- @type GOAPGraph
 local GOAPGraph = class("GOAPGraph", graph.Graph)
