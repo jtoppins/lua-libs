@@ -35,7 +35,6 @@ end
 
 --- Describes a response curve with a clamped input range of [0,1]
 -- and a clamped output of [0,1].
--- @type Axis
 local Axis = class("Axis")
 
 --- Constructor.
@@ -72,7 +71,6 @@ end
 
 --- Infinite Axis Utility System (IAUS). Describes a set of axes used
 -- to generate a utility score.
--- @type IAUS
 local IAUS = class("IAUS")
 
 --- Constructor.

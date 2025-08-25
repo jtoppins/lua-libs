@@ -11,7 +11,6 @@ local errno = {
 }
 
 --- Represents an edge in a graph.
--- @type Edge
 local Edge = class("graph-edge")
 
 --- Constructor.
@@ -26,7 +25,6 @@ function Edge:cost()
 end
 
 --- Represents a node or vertex in a graph.
--- @type Node
 local Node = class("graph-node")
 function Node:__init()
 end
@@ -40,7 +38,6 @@ end
 -- the storage model for adjacency means we can only have 1 edge per
 -- node pair. This should be ok as we can just have the edge class
 -- have flags for things like domain
--- @type Graph
 local Graph = class("graph")
 function Graph:__init()
 	self.nodes = {}

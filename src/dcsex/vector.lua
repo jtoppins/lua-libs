@@ -23,7 +23,6 @@ end
 -- Metamethods support scalar addition, subtraction, multiplication,
 -- and division. There is also support for strict equality and string
 -- serialization.
--- @type Vec2
 local Vec2 = class("Vec2")
 local mt2d = {}
 
@@ -164,7 +163,6 @@ end
 -- Metamethods support scalar addition, subtraction, multiplication,
 -- and division. There is also support for strict equality and string
 -- serialization.
--- @type Vec3
 local Vec3 = class("Vec3")
 local mt3d = {}
 

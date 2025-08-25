@@ -19,7 +19,6 @@ end
 
 --- Provides a common interface for representing an agent centric
 -- symbolic state.
--- @type Property
 local Property = utils.override_ops(class("world-property"), propmt)
 
 --- Constructor.
@@ -40,7 +39,6 @@ end
 
 --- Is a set of Property objects with the set representing a particular
 -- state.
--- @type WorldState
 local WorldState = class("WorldState")
 
 --- Constructor.
@@ -114,7 +112,6 @@ function WorldState:distance(state)
 end
 
 --- Represents an activity in a plan to be executed by some agent.
--- @type Action
 local Action = class("Action", graph.Edge)
 
 --- Constructor.
@@ -141,7 +138,6 @@ function Action:checkProceduralPreconditions(--[[goalsofar]])
 end
 
 --- Represents a WorldState in a graph.
--- @type StateNode
 local StateNode = class("StateNode", graph.Node)
 
 --- Constructor.
@@ -165,7 +161,6 @@ end
 
 --- Describes the association between States (nodes) and Actions (edges)
 -- allowing graph traversal algorithms to reason about these objects.
--- @type GOAPGraph
 local GOAPGraph = class("GOAPGraph", graph.Graph)
 
 --- Constructor.

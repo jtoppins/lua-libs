@@ -1,0 +1,305 @@
+#!/bin/env lua
+
+require("os")
+require("io")
+require("lfs")
+local pretty = require("pl.pretty")
+
+local function joinPaths(...)
+	return table.concat({...}, package.config:sub(1,1))
+end
+
+local function readdump(filepath)
+	local file, reason
+
+	if filepath == "-" then
+		file = io.stdin
+	else
+		file, reason = io.open(filepath, "r")
+	end
+
+	if file == nil then
+		error(reason or "problem with stdin")
+	end
+
+	local content = file:read("*all")
+	file:close()
+
+	local dump
+	dump, reason = pretty.read(content)
+	if dump == nil then
+		error(reason)
+	end
+	return dump
+end
+
+local function comp(a, b)
+	return a.name < b.name
+end
+
+local function interp(s, tab)
+	return (s:gsub('(%b%%)',
+		function(w) return tab[w:sub(2,-2)] or w end))
+end
+
+-- markdown formatting
+
+local function newline(str)
+	return "\n"..tostring(str or "")
+end
+
+local function header(title, lvl)
+	if lvl > 5 then
+		error("Header level too high.")
+	end
+	return ("#"):rep(lvl)..(" %s\n"):format(title)
+end
+
+local function bold(str)
+	return ("**%s**"):format(str)
+end
+
+--[[
+local function italic(str)
+	return ("_%s_"):format(str)
+end
+
+local function boldItalic(str)
+	return ("***%s***"):format(str)
+end
+
+local function strike(str)
+	return ("~~%s~~"):format(str)
+end
+
+local function subscript(str)
+	return ("<sub>%s</sub>"):format(str)
+end
+
+local function superscript(str)
+	return ("<sup>%s</sup>"):format(str)
+end
+
+local function underline(str)
+	return ("<ins>%s</ins>"):format(str)
+end
+--]]
+
+local function unorderedList(tbl)
+	local s = ""
+
+	for _, val in ipairs(tbl) do
+		s = s.."+ "..tostring(val).."\n"
+	end
+	return s
+end
+
+local function defList(map)
+	local str = ""
+
+	for key, val in ipairs(map) do
+		if key > 1 then
+			str = str.."\n"
+		end
+		str = str..(" <dt>%s</dt>\n"):format(val)..
+			(" <dd>%s</dd>\n"):format(map.map[val])
+	end
+	return "<dl>\n"..str.."</dl>"
+end
+
+local function hasParams(str, item, lvl)
+	if #(item.params) < 1 then
+		return str
+	end
+
+	return str..newline(header("Parameters", lvl))..
+		newline(defList(item.params)).."\n"
+end
+
+local function hasReturn(str, item, lvl)
+	if item.ret == nil then
+		return str
+	end
+
+	return str..newline(header("Returns", lvl))..
+		newline(unorderedList(item.ret)).."\n"
+end
+
+local function hasSeeAlso(str, item, lvl)
+	if item.see == nil or #(item.see) < 1 then
+		return str
+	end
+
+	local tbl = {}
+	for _, val in ipairs(item.see) do
+		table.insert(tbl, "["..tostring(val.label).."](ref/"..
+			tostring(val.label)..".md)")
+	end
+
+	return str..newline(header("See Also", lvl))..
+		newline(unorderedList(tbl)).."\n"
+end
+
+local function hasUsage(str, item, lvl)
+	return str..newline(header("Usage", lvl))..
+		newline(tostring(item.usage)).."\n"
+end
+
+local function genericSection(hfile, item)
+	hfile:write("\n"..item.name)
+	hfile:write(("\nTODO: generic section (%s)"):format(item.type))
+end
+
+local function tableSection(hfile, item, lvl)
+	local summary
+	local body   = ""
+	local fmtstr = [[
+<details>
+<summary>%SUMMARY%</summary>
+
+%HEADER%%DESCRIPTION%%BODY%
+</details>
+]]
+	local title = string.format("%s", item.name)
+
+	if item.package ~= nil then
+		title = title:gsub(item.package..".", "")
+	end
+
+	if item.summary:len() > 1 then
+		summary = bold(title).." - "..item.summary
+	else
+		summary = bold(title)
+	end
+
+	for _, func in ipairs({hasParams, hasSeeAlso, hasUsage}) do
+		body = func(body, item, lvl+1)
+	end
+
+	hfile:write(interp(fmtstr, {
+		["SUMMARY"]     = summary,
+		["HEADER"]      = header(title, lvl),
+		["DESCRIPTION"] = item.description.."\n" or "",
+		["BODY"]        = body,
+	}))
+end
+
+local function funcSection(hfile, item, lvl)
+	local summary
+	local body   = ""
+	local fmtstr = [[
+<details>
+<summary>%SUMMARY%</summary>
+
+%HEADER%%DESCRIPTION%%BODY%
+</details>
+]]
+	local title = string.format("%s%s", item.name, item.args)
+
+	if item.package ~= nil then
+		title = title:gsub(item.package..".", "")
+	end
+
+	if item.summary:len() > 1 then
+		summary = bold(title).." - "..item.summary
+	else
+		summary = bold(title)
+	end
+
+	for _, func in ipairs({hasParams, hasReturn,
+			       hasSeeAlso, hasUsage}) do
+		body = func(body, item, lvl+1)
+	end
+
+	hfile:write(interp(fmtstr, {
+		["SUMMARY"]     = summary,
+		["HEADER"]      = header(title, lvl),
+		["DESCRIPTION"] = item.description.."\n" or "",
+		["BODY"]        = body,
+	}))
+end
+
+local itemHandlers = {
+	["table"]    = tableSection,
+	["function"] = funcSection,
+}
+
+local sectionMap = {
+	["function"] = "Functions",
+	["field"]    = "Fields",
+	["table"]    = "Tables",
+}
+
+local function processModule(hfile, mod, lvl)
+	local str = ""
+	hfile:write(header(mod.name, lvl))
+	hfile:write(string.format("\n%s\n", mod.summary))
+
+	if mod.description:len() > 1 then
+		hfile:write(newline(header("Description", lvl+1)))
+		hfile:write(string.format("\n%s\n", mod.description))
+	end
+
+	for _, func in ipairs({hasSeeAlso, hasUsage}) do
+		str = func(str, mod, lvl+1)
+	end
+	hfile:write(str)
+
+	local sections = {}
+	for _, item in ipairs(mod.items) do
+		item.package = mod.package
+
+		if sections[item.section] == nil then
+			sections[item.section] = {}
+		end
+		table.insert(sections[item.section], item)
+	end
+
+	for key, items in pairs(sections) do
+		local title = key
+		if sectionMap[key] ~= nil then
+			title = sectionMap[key]
+		end
+		hfile:write(newline(header(title, lvl+1)).."\n")
+
+		for _, item in ipairs(items) do
+			local handler = itemHandlers[item.type]
+
+			if handler ~= nil then
+				handler(hfile, item, lvl+2)
+			else
+				genericSection(hfile, item, lvl+2)
+			end
+		end
+	end
+end
+
+local function main(args)
+	local dump = readdump(args.refdump)
+	table.sort(dump, comp)
+
+	-- TODO: generate index.md file for reference section
+
+	for _, mod in ipairs(dump) do
+		local file, reason
+		file, reason = io.open(joinPaths(args.output,
+					mod.name..".md"), "w")
+		if file == nil then
+			error(reason)
+		end
+
+		processModule(file, mod, 1)
+		file:close()
+	end
+	return 0
+end
+
+local parser = require("argparse")("gendocs",
+	[[Convert dumped ldoc output to markdown reference documentation.]])
+parser:argument("refdump", "Source reference dump")
+parser:option("-o --output", "Output path")
+	:target("output")
+	:argname("<path>")
+
+local args = parser:parse()
+return main(args)

@@ -12,8 +12,8 @@ srctree := $(realpath $(dir $(this-makefile)))
 # Beautify output
 # ----------------------------------------------------------------
 # Build commands start with "cmd_". You can optionally define
-# "quiet_cmd_*". If defined, the short log is printed. Otherwise, no log from
-# that command is printed by default.
+# "quiet_cmd_*". If defined, the short log is printed. Otherwise,
+# no log from that command is printed by default.
 #
 # e.g.)
 #    quiet_cmd_install = INSTALL  $(SOURCE)
@@ -54,7 +54,7 @@ cmd = $(if $(Q),@set -e; echo "$(quiet_cmd_$(1))"; $(cmd_$(1)),$(cmd_$(1)))
 INSTALLPREFIX := $(if $(PREFIX), "$(PREFIX)"/,)
 PROJ_VERSION  ?= $(shell git describe)
 
-LUA_PATH := $(CURDIR)/src/?.lua;;
+LUA_PATH := $(CURDIR)/src/?.lua;$(CURDIR)/scripts/?.lua;;
 export LUA_PATH
 
 # Make variables
@@ -68,18 +68,22 @@ LUACC                 = luac
 LUACHECK              = luacheck
 LUACHECK_OPTS         = $(if $(Q),-q)
 LUATESTS              = busted
+LUADOC                = ldoc
+LUADOC_OPTS           = $(if $(Q),-q) -i
 TZ                    = "UTC 0"
 
 export PREFIX PROJ_VERSION
-export INSTALL INSTALLFLAGS ZIP TAR SED LUA LUACC LUACHECK LUABUSTED TZ
-export LUACHECK_OPTS
+export INSTALL INSTALLFLAGS ZIP TAR SED LUA LUACC LUACHECK LUATESTS TZ
+export LUACHECK_OPTS LUADOC LUADOC_OPTS
 
 quiet_cmd_rmfiles = CLEAN  $(rm-files)
       cmd_rmfiles = rm -rf $(rm-files)
 
-generated_files := src/dcsex.lua
-rm-files := $(generated_files)
-install-targets = lib_install
+generated_docs := docs/reference
+generated_sources := src/dcsex.lua
+source_files := $(generated_sources)
+source_files += $(filter %.lua, $(wildcard src/dcsex/* src/dcsex/*/*))
+rm-files := $(generated_docs) $(generated_sources)
 
 PHONY += all
 __all: all
@@ -87,22 +91,22 @@ __all: all
 PHONY += all
 all: generated
 
-PHONY += generated
-generated: $(generated_files)
+PHONY += generated generated-docs
+generated: $(generated_sources)
+generated-docs: $(generated_docs)
 
 PHONY += check syntax tests
 check: syntax tests
 
 syntax: generated
-	$(Q)$(LUACHECK) $(LUACHECK_OPTS) src tests
+	$(Q)$(LUACHECK) $(LUACHECK_OPTS) src tests scripts/gendocs
 	$(Q)git diff --check
 
 tests: generated
-	$(Q)(cd tests; busted)
+	$(Q)(cd tests; $(LUATESTS))
 
 PHONY += docs
-docs: generated
-	@echo 'not implemented yet.'
+docs: generated generated-docs
 
 PHONY += help
 help:
@@ -124,7 +128,16 @@ quiet_cmd_genfile = GEN    $@
       cmd_genfile = \
 		$(SED) -e "s:%VERSION%:$(PROJ_VERSION):" $< > $@
 
-$(generated_files): %.lua: %.lua.in
+$(generated_sources): %.lua: %.lua.in
 	$(call cmd,genfile)
+
+quiet_cmd_gendocs = LDOC   $@
+      cmd_gendocs = \
+		mkdir -p $@; \
+		$(LUADOC) $(LUADOC_OPTS) --filter pl.pretty.dump src | \
+		scripts/gendocs --output $@ -;
+
+$(generated_docs): $(source_files) scripts/gendocs
+	$(call cmd,gendocs)
 
 .PHONY: $(PHONY)
