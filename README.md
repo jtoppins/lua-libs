@@ -1,6 +1,13 @@
-# LUA Library
+---
+layout: default
+title: Home
+permalink: /
+---
 
-A set of LUA primitives.
+# DCS Extensions (DCSex)
+
+A set of LUA classes and functions that extend the DCS mission scripting
+environment so richer missions can be created.
 
 ## Contribution Guide
 
@@ -14,9 +21,10 @@ development is done in feature branches which are eventually merged into
 
 ### Setup the Development Environment
 
-The easiest way to install DCT is to use Windows Subsystem for Linux.
-Do this by starting a powershell console by hitting keys Win+r and
-type `powershell`. Once in the shell, run the following commands:
+The easiest way to setup the development environment is to use Windows
+Subsystem for Linux. Do this by starting a powershell console by
+hitting keys Win+r and type `powershell`. Once in the shell, run the
+following command:
 
 ```bash
 wsl --install -d "Debian"
@@ -26,8 +34,9 @@ If you are having trouble see
 [Microsoft's help](https://learn.microsoft.com/en-us/windows/wsl/install).
 See also [WSL devel env setup](https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password).
 
-After you have setup your Linux user you can run the following commands in
-a bash prompt to finalize the DCT setup. It is assumed you are using Debian.
+After you have setup your Linux user you can run the following commands
+in a bash prompt to finalize the setup. It is assumed you are using
+Debian.
 
 ```bash
 cd ~
@@ -42,4 +51,4 @@ lua-libs uses to run unit-tests and install code directly from the source tree.
 
 ## Contact Us
 
-* [DCT discord](https://discord.gg/kG38MDqDrN)
+* [discord](https://discord.gg/kG38MDqDrN)

@@ -5,4 +5,4 @@ set -u
 
 sudo apt install -y make bash-completion \
 	lua5.1 lua-filesystem lua-check lua-busted \
-	lua-ldoc
+	lua-ldoc lua-zip

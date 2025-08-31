@@ -79,7 +79,7 @@ export LUACHECK_OPTS LUADOC LUADOC_OPTS
 quiet_cmd_rmfiles = CLEAN  $(rm-files)
       cmd_rmfiles = rm -rf $(rm-files)
 
-generated_docs := docs/reference
+generated_docs := docs/_reference
 generated_sources := src/dcsex.lua
 source_files := $(generated_sources)
 source_files += $(filter %.lua, $(wildcard src/dcsex/* src/dcsex/*/*))

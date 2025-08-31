@@ -48,6 +48,12 @@ local function newline(str)
 	return "\n"..tostring(str or "")
 end
 
+local function no_toc(str)
+	return str..[[
+{: .no_toc}
+]]
+end
+
 local function header(title, lvl)
 	if lvl > 5 then
 		error("Header level too high.")
@@ -55,11 +61,11 @@ local function header(title, lvl)
 	return ("#"):rep(lvl)..(" %s\n"):format(title)
 end
 
+--[[
 local function bold(str)
 	return ("**%s**"):format(str)
 end
 
---[[
 local function italic(str)
 	return ("_%s_"):format(str)
 end
@@ -89,7 +95,7 @@ local function unorderedList(tbl)
 	local s = ""
 
 	for _, val in ipairs(tbl) do
-		s = s.."+ "..tostring(val).."\n"
+		s = s.."* "..tostring(val).."\n"
 	end
 	return s
 end
@@ -101,10 +107,10 @@ local function defList(map)
 		if key > 1 then
 			str = str.."\n"
 		end
-		str = str..(" <dt>%s</dt>\n"):format(val)..
-			(" <dd>%s</dd>\n"):format(map.map[val])
+		str = str..("%s\n"):format(val)..
+			(": %s\n"):format(map.map[val])
 	end
-	return "<dl>\n"..str.."</dl>"
+	return str
 end
 
 local function hasParams(str, item, lvl)
@@ -132,8 +138,8 @@ local function hasSeeAlso(str, item, lvl)
 
 	local tbl = {}
 	for _, val in ipairs(item.see) do
-		table.insert(tbl, "["..tostring(val.label).."](ref/"..
-			tostring(val.label)..".md)")
+		table.insert(tbl, "["..tostring(val.label).."](../"..
+			tostring(val.label).."/)")
 	end
 
 	return str..newline(header("See Also", lvl))..
@@ -141,69 +147,22 @@ local function hasSeeAlso(str, item, lvl)
 end
 
 local function hasUsage(str, item, lvl)
+	if item.usage == nil then
+		return str
+	end
+
 	return str..newline(header("Usage", lvl))..
 		newline(tostring(item.usage)).."\n"
 end
 
-local function genericSection(hfile, item)
-	hfile:write("\n"..item.name)
-	hfile:write(("\nTODO: generic section (%s)"):format(item.type))
-end
-
-local function tableSection(hfile, item, lvl)
-	local summary
+local function writeSection(hfile, title, item, lvl)
 	local body   = ""
 	local fmtstr = [[
-<details>
-<summary>%SUMMARY%</summary>
-
 %HEADER%%DESCRIPTION%%BODY%
-</details>
 ]]
-	local title = string.format("%s", item.name)
 
 	if item.package ~= nil then
 		title = title:gsub(item.package..".", "")
-	end
-
-	if item.summary:len() > 1 then
-		summary = bold(title).." - "..item.summary
-	else
-		summary = bold(title)
-	end
-
-	for _, func in ipairs({hasParams, hasSeeAlso, hasUsage}) do
-		body = func(body, item, lvl+1)
-	end
-
-	hfile:write(interp(fmtstr, {
-		["SUMMARY"]     = summary,
-		["HEADER"]      = header(title, lvl),
-		["DESCRIPTION"] = item.description.."\n" or "",
-		["BODY"]        = body,
-	}))
-end
-
-local function funcSection(hfile, item, lvl)
-	local summary
-	local body   = ""
-	local fmtstr = [[
-<details>
-<summary>%SUMMARY%</summary>
-
-%HEADER%%DESCRIPTION%%BODY%
-</details>
-]]
-	local title = string.format("%s%s", item.name, item.args)
-
-	if item.package ~= nil then
-		title = title:gsub(item.package..".", "")
-	end
-
-	if item.summary:len() > 1 then
-		summary = bold(title).." - "..item.summary
-	else
-		summary = bold(title)
 	end
 
 	for _, func in ipairs({hasParams, hasReturn,
@@ -212,16 +171,31 @@ local function funcSection(hfile, item, lvl)
 	end
 
 	hfile:write(interp(fmtstr, {
-		["SUMMARY"]     = summary,
 		["HEADER"]      = header(title, lvl),
 		["DESCRIPTION"] = item.description.."\n" or "",
 		["BODY"]        = body,
 	}))
 end
 
+local function genericSection(hfile, item)
+	hfile:write("\n"..item.name..tostring(item.args))
+	hfile:write(("\nTODO: generic section (%s)"):format(item.type))
+end
+
+local function tableSection(hfile, item, lvl)
+	local title = string.format("%s", item.name)
+	writeSection(hfile, title, item, lvl)
+end
+
+local function funcSection(hfile, item, lvl)
+	local title = string.format("%s%s", item.name, item.args)
+	writeSection(hfile, title, item, lvl)
+end
+
 local itemHandlers = {
 	["table"]    = tableSection,
 	["function"] = funcSection,
+	["field"]    = tableSection,
 }
 
 local sectionMap = {
@@ -232,8 +206,25 @@ local sectionMap = {
 
 local function processModule(hfile, mod, lvl)
 	local str = ""
-	hfile:write(header(mod.name, lvl))
+
+	-- Apply front matter to each file to jekyll will process
+	-- the file.
+	hfile:write("---\n")
+	hfile:write("layout: default\n")
+	hfile:write("title: "..tostring(mod.name).."\n")
+	hfile:write("---\n")
+
+	hfile:write(no_toc(header(mod.name, lvl)))
 	hfile:write(string.format("\n%s\n", mod.summary))
+
+	hfile:write([[
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+]])
 
 	if mod.description:len() > 1 then
 		hfile:write(newline(header("Description", lvl+1)))
@@ -277,8 +268,6 @@ end
 local function main(args)
 	local dump = readdump(args.refdump)
 	table.sort(dump, comp)
-
-	-- TODO: generate index.md file for reference section
 
 	for _, mod in ipairs(dump) do
 		local file, reason
