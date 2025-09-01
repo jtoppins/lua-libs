@@ -9,7 +9,6 @@ describe("dcsex library", function()
 	end)
 end)
 
-local utils = dcsex.utils
 local class = dcsex.class
 
 describe("class() function", function()
@@ -209,7 +208,7 @@ describe("instance metamethods", function()
 			return a.cost == other.cost
 		end
 
-		local A = utils.override_ops(class("A"), A_mt)
+		local A = dcsex.overrideOps(class("A"), A_mt)
 		function A:__init(v)
 			self.cost = v
 		end

@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local utils = require("dcsex.utils")
+local overrideOps = require("dcsex.overrideOps")
 local class = require("dcsex.class")
 local graph = require("dcsex.containers.graph")
 local astar = require("dcsex.algorithms.search_astar")
@@ -19,7 +19,7 @@ end
 
 --- Provides a common interface for representing an agent centric
 -- symbolic state.
-local Property = utils.override_ops(class("world-property"), propmt)
+local Property = overrideOps(class("world-property"), propmt)
 
 --- Constructor.
 -- @param __id a globally unique ID of the symbol

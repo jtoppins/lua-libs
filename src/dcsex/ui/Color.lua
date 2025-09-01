@@ -2,7 +2,7 @@
 
 local class  = require("dcsex.class")
 local mymath = require("dcsex.math")
-local utils  = require("dcsex.utils")
+local overrideOps = require("dcsex.overrideOps")
 
 local function setColor(_, _, new, old)
 	local v = tonumber(new)
@@ -21,7 +21,7 @@ end
 
 --- Color class, represents a DCS color table.
 -- @classmod dcsex.ui.Color
-local Color = utils.override_ops(class("Color"), colormt)
+local Color = overrideOps(class("Color"), colormt)
 
 --- Copy constructor.
 -- @param obj the object to copy color information from.
