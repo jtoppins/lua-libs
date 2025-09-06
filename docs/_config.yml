@@ -1,6 +1,9 @@
 title: DCS Extensions
 tagline: DCS mission scripting extensions
 description: Mission scripting framework extensions for Digital Combat Simulator (DCS) missions.
+release_link: "https://github.com/jtoppins/lua-libs/releases/latest"
+github_link:  "https://github.com/jtoppins/lua-libs"
+discord_link: "https://discord.gg/kG38MDqDrN"
 
 plugins:
   - jekyll-default-layout
