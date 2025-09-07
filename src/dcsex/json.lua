@@ -859,7 +859,8 @@ function encode_value(self, value, parents, etc, options, indent)
       end
 
       if parents[T] then
-         self:onEncodeError("table " .. tostring(T) .. " is a child of itself", etc)
+         return json_string_literal("recursive reference "..tostring(T))
+         --self:onEncodeError("table " .. tostring(T) .. " is a child of itself", etc)
       else
          parents[T] = true
       end
