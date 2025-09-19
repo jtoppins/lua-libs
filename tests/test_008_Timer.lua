@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 require 'busted.runner'()
 require("os")
-require("dcsex")
+require("dcsext")
 
 local function sleep(s)
 	local n = os.clock() + s
@@ -12,8 +12,8 @@ describe("validate Timer", function()
 	local a, b
 
 	test("start and update", function()
-		a = dcsex.Timer(15, os.clock)
-		b = dcsex.Timer(1, os.clock)
+		a = dcsext.Timer(15, os.clock)
+		b = dcsext.Timer(1, os.clock)
 
 		a:start()
 		b:start()

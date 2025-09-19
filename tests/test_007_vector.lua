@@ -1,14 +1,14 @@
 #!/usr/bin/lua
 
 require 'busted.runner'()
-require("dcsex")
+require("dcsext")
 
-describe("validate dcsex.vector.Vec2", function()
+describe("validate dcsext.vector.Vec2", function()
 	local vector
 	local a, b, c
 
 	before_each(function()
-		vector = dcsex.vector
+		vector = dcsext.vector
 		a = vector.Vec2({x=5,y=5})
 		b = vector.Vec2({x=3,y=3})
 		c = vector.Vec2({x=3,y=3})
@@ -72,12 +72,12 @@ describe("validate dcsex.vector.Vec2", function()
 	end)
 end)
 
-describe("validate dcsex.vector.Vec3", function()
+describe("validate dcsext.vector.Vec3", function()
 	local vector
 	local a, b, c
 
 	before_each(function()
-		vector = dcsex.vector
+		vector = dcsext.vector
 		a = vector.Vec3.new(1.0, 0.0, 0.0)
 		b = vector.Vec3.new(0.0, 1.0, 0.0)
 		c = vector.Vec3.new(0.0, 1.0, 0.0)

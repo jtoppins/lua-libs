@@ -52,7 +52,7 @@ cmd = $(if $(Q),@set -e; echo "$(quiet_cmd_$(1))"; $(cmd_$(1)),$(cmd_$(1)))
 
 # prefix is used to change the install target
 INSTALLPREFIX = $(if $(PREFIX), "$(PREFIX)"/,)
-MODNAME       := dcsex
+MODNAME       := dcsext
 PROJ_VERSION  ?= $(shell git describe)
 
 LUA_PATH := $(CURDIR)/src/?.lua;$(CURDIR)/scripts/?.lua;;
@@ -83,9 +83,9 @@ export INSTALL INSTALLFLAGS ZIP TAR SED LUA LUACC LUACHECK LUATESTS TZ
 export LUACHECK_OPTS LUADOC LUADOC_OPTS
 
 generated_docs := docs/_reference
-generated_sources := src/dcsex.lua
+generated_sources := src/$(MODNAME).lua
 source_files := $(generated_sources)
-source_files += $(filter %.lua, $(wildcard src/dcsex/* src/dcsex/*/*))
+source_files += $(filter %.lua, $(wildcard src/$(MODNAME)/* src/$(MODNAME)/*/*))
 rm-files := $(generated_docs) $(generated_sources)
 install-targets := mod_install
 
@@ -165,7 +165,7 @@ quiet_cmd_distzip     = ZIP     $@
 
 quiet_cmd_mod_remove  = RM      $@
       cmd_mod_remove  = \
-		rm -rf $(MISSION_LIB_PATH)/dcsex* \
+		rm -rf $(MISSION_LIB_PATH)/$(MODNAME)* \
 			$(SCRIPTS_INSTALL_PATH)/loadplugins.lua
 
 quiet_cmd_mod_install = INSTALL $@

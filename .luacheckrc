@@ -36,7 +36,7 @@ read_globals = {
 	"Warehouse",
 
 	-- DCSEx specific
-	"dcsex",
+	"dcsext",
 }
 
 files["api/*"] = {
@@ -73,7 +73,7 @@ files["api/*"] = {
 	},
 }
 
-files["src/dcsex/json.lua"] = {
+files["src/dcsext/json.lua"] = {
 	max_cyclomatic_complexity = false,
 	max_line_length = false,
 	ignore = {"614", "411"},

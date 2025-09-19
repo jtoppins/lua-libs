@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 require 'busted.runner'()
-require("dcsex")
+require("dcsext")
 
 local testvec = {
 	{
@@ -138,17 +138,17 @@ local testvec = {
 }
 
 
-describe("validate dcsex.converter", function()
+describe("validate dcsext.converter", function()
 	test("convert", function()
 		for _, data in ipairs(testvec) do
-			local result, err = dcsex.converter.convert(
+			local result, err = dcsext.converter.convert(
 							data.value,
 							data.from,
 							data.to)
 			assert(result, err)
 			assert.is.near(result, data.result, data.tolerance)
 			assert.is.equal(data.tostring,
-				dcsex.converter.tostring(result, data.to,
+				dcsext.converter.tostring(result, data.to,
 					data.precision))
 		end
 	end)
@@ -160,7 +160,7 @@ describe("validate dcsex.converter", function()
 			Easting = 12345,
 			Northing = 67890,
 		}
-		assert.is.equal(dcsex.converter.tostring(mgrs, "mgrs", 4),
+		assert.is.equal(dcsext.converter.tostring(mgrs, "mgrs", 4),
 			"37T DK 1234 6789")
 
 		local ll = {
@@ -168,11 +168,11 @@ describe("validate dcsex.converter", function()
 			longitude = -78.67890,
 			altitude = 150,
 		}
-		assert.is.equal(dcsex.converter.tostring(ll, "dd", 2),
+		assert.is.equal(dcsext.converter.tostring(ll, "dd", 2),
 			"36.12°N 78.67°W")
-		assert.is.equal(dcsex.converter.tostring(ll, "ddm", 3),
+		assert.is.equal(dcsext.converter.tostring(ll, "ddm", 3),
 			"36°07.38'N 078°40.68'W")
-		assert.is.equal(dcsex.converter.tostring(ll, "dms", 4),
+		assert.is.equal(dcsext.converter.tostring(ll, "dms", 4),
 			"36°07'24.2\"N 078°40'44.0\"W")
 	end)
 end)

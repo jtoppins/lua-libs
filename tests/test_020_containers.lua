@@ -1,10 +1,10 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("os")
-require("dcsex")
+require("dcsext")
 
 describe("containers.Queue", function()
-	local Queue = dcsex.containers.Queue
+	local Queue = dcsext.containers.Queue
 	local tests = {
 		{
 			name = "storage",
@@ -74,7 +74,7 @@ describe("containers.Queue", function()
 end)
 
 describe("containers.PQueue", function()
-	local PriorityQueue = dcsex.containers.PriorityQueue
+	local PriorityQueue = dcsext.containers.PriorityQueue
 
 	local input = {
 		{3, "Clear drains"},
@@ -119,7 +119,7 @@ describe("containers.PQueue", function()
 end)
 
 describe("containers.RingBuffer", function()
-	local RingBuffer = dcsex.containers.RingBuffer
+	local RingBuffer = dcsext.containers.RingBuffer
 	local tests = {
 		{
 			name = "storage",
@@ -165,7 +165,7 @@ describe("containers.RingBuffer", function()
 end)
 
 describe("containers.Graph", function()
-	local graph = dcsex.containers.graph
+	local graph = dcsext.containers.graph
 
 	-- luacheck: ignore 311
 	test("test", function()

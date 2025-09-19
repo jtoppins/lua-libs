@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 require 'busted.runner'()
-require("dcsex")
+require("dcsext")
 
 local t = {
 	a = 4,
@@ -26,7 +26,7 @@ describe("validate table.", function()
 		}
 
 		local newout = {}
-		for k, v in dcsex.table.iterators.sortedPairs(test.input) do
+		for k, v in dcsext.table.iterators.sortedPairs(test.input) do
 			table.insert(newout, string.format("%s = %d", k, v))
 		end
 		assert.is.equal(table.concat(newout, ", "),
@@ -34,15 +34,15 @@ describe("validate table.", function()
 	end)
 
 	test("contains", function()
-		assert.is_true(dcsex.table.contains(t, 6))
-		assert.is_false(dcsex.table.contains(t, 100))
+		assert.is_true(dcsext.table.contains(t, 6))
+		assert.is_false(dcsext.table.contains(t, 100))
 
-		local _, key = dcsex.table.contains(t, 4)
+		local _, key = dcsext.table.contains(t, 4)
 		assert.is.equal(key, "a")
 	end)
 
 	test("deepCopy", function()
-		local mcopy = dcsex.table.deepCopy(t)
+		local mcopy = dcsext.table.deepCopy(t)
 		assert.is.same(t, mcopy)
 	end)
 
@@ -61,24 +61,24 @@ describe("validate table.", function()
 			},
 		}
 
-		dcsex.table.foreachCall(tbl, pairs, "sum")
+		dcsext.table.foreachCall(tbl, pairs, "sum")
 		assert.is.equal(v, 2)
 	end)
 
 	test("getKey", function()
-		assert.is.equal(dcsex.table.getKey(t, 6), "b")
-		assert.is.equal(dcsex.table.getKey(t, 100), nil)
+		assert.is.equal(dcsext.table.getKey(t, 6), "b")
+		assert.is.equal(dcsext.table.getKey(t, 100), nil)
 	end)
 
 	test("getKeys", function()
-		local v = dcsex.table.getKeys(t)
+		local v = dcsext.table.getKeys(t)
 		table.sort(v)
 		assert.is.same(v, {"a", "b", "c"})
 	end)
 
 	test("merge", function()
-		local v = dcsex.table.merge({}, t)
-		dcsex.table.merge(v, {b = 20, d = 40})
+		local v = dcsext.table.merge({}, t)
+		dcsext.table.merge(v, {b = 20, d = 40})
 		assert.is.same(v, {a=4, b=20, c=10, d=40})
 	end)
 end)

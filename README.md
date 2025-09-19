@@ -4,7 +4,7 @@ title: Home
 permalink: /
 ---
 
-# DCS Extensions (DCSEx)
+# DCS Extensions (DCSExt)
 
 A set of LUA classes and functions that extend the DCS mission scripting
 environment so richer missions can be created.
@@ -59,7 +59,7 @@ be able to be unzipped right into the DCS saved games folder.
 
 You can find the `MissionScripting.lua` file in the game install directory
 under `Scripts`. This file must be modified to load all script libraries
-of DCSEx. DCSEx attempts to make this rather easy by only needing to add
+of DCSExt. DCSExt attempts to make this rather easy by only needing to add
 a single line to the `MissionScripting.lua` file.
 
 ```diff
@@ -98,9 +98,9 @@ to include the list of addition libraries that you want loaded.
 
 ## Library Overhead
 
-Other than a small amount of additional memory used to load DCSEx and
+Other than a small amount of additional memory used to load DCSExt and
 store its byte-code in memory. No additional processes or auto-indexing
-are started behind the scenes unlike other frameworks/libraries. DCSEx
+are started behind the scenes unlike other frameworks/libraries. DCSExt
 will just sit in memory until something calls one of its functions.
 
 ## Contact Us

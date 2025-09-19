@@ -11,17 +11,17 @@ if lfs.attributes(libspath) == nil then
 end
 
 package.path = table.concat({package.path, pkgpath}, ";")
-require("dcsex")
+require("dcsext")
 
 local function loadplugins(cfgfile)
-	local plugins = dcsex.io.readLua(cfgfile, "plugins")
+	local plugins = dcsext.io.readLua(cfgfile, "plugins")
 
 	for _, plugin in ipairs(plugins) do
 		require(plugin)
 	end
 end
 
-local cfgfile = dcsex.io.joinPaths(lfs.writedir(),
+local cfgfile = dcsext.io.joinPaths(lfs.writedir(),
 				   "Config",
 				   "missionplugins.cfg")
 loadplugins(cfgfile)

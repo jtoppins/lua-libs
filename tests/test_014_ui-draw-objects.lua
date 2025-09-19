@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 require('busted.runner')()
-require("dcsex")
+require("dcsext")
 
 local points = {
 	{x = 25, y = 30},
@@ -13,19 +13,19 @@ describe("Color", function()
 	test("is correct", function()
 		local colors = {
 			{
-				color = dcsex.ui.Color.colors.BLACK,
+				color = dcsext.ui.Color.colors.BLACK,
 				test = {0,0,0,1}
 			}, {
-				color = dcsex.ui.Color.colors.GRAY,
+				color = dcsext.ui.Color.colors.GRAY,
 				test = {128/255,128/255,128/255,1}
 			}, {
-				color = dcsex.ui.Color.colors.RED,
+				color = dcsext.ui.Color.colors.RED,
 				test = {1,0,0,1}
 			}, {
-				color = dcsex.ui.Color.colors.GREEN,
+				color = dcsext.ui.Color.colors.GREEN,
 				test = {0,1,0,1}
 			}, {
-				color = dcsex.ui.Color.colors.BLUE,
+				color = dcsext.ui.Color.colors.BLUE,
 				test = {0,0,1,1}
 			}
 		}
@@ -40,39 +40,39 @@ describe("ui objects", function()
 	test("are drawable", function()
 		local objs = {
 			{
-				ctor = dcsex.ui.Arrow,
+				ctor = dcsext.ui.Arrow,
 				arg = points,
 				stub = "arrorToAll",
 			}, {
-				ctor = dcsex.ui.Circle,
+				ctor = dcsext.ui.Circle,
 				arg = points[1],
 				stub = "circleToAll",
 			}, {
-				ctor = dcsex.ui.Line,
+				ctor = dcsext.ui.Line,
 				arg = points,
 				stub = "lineToAll",
 			}, {
-				ctor = dcsex.ui.Mark,
+				ctor = dcsext.ui.Mark,
 				arg = points[1],
 				stub = "markToAll",
 			}, {
-				ctor = dcsex.ui.PolyLine,
+				ctor = dcsext.ui.PolyLine,
 				arg = points,
 				stub = "lineToAll",
 			}, {
-				ctor = dcsex.ui.Quad,
+				ctor = dcsext.ui.Quad,
 				arg = points,
 				stub = "quadToAll",
 			}, {
-				ctor = dcsex.ui.Rect,
+				ctor = dcsext.ui.Rect,
 				arg = points,
 				stub = "rectToAll",
 			}, {
-				ctor = dcsex.ui.Text,
+				ctor = dcsext.ui.Text,
 				arg = points[1],
 				stub = "textToAll",
 			}, {
-				ctor = dcsex.ui.Triangle,
+				ctor = dcsext.ui.Triangle,
 				arg = points,
 				stub = "markupToAll",
 			},

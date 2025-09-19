@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 require 'busted.runner'()
-require("dcsex")
+require("dcsext")
 
 local testcentroid = {
 	{
@@ -52,14 +52,14 @@ describe("validate math.", function()
 			[4] = true,
 		}
 
-		assert.is.equal(dcsex.math.bitset2num(bitset), 18)
+		assert.is.equal(dcsext.math.bitset2num(bitset), 18)
 	end)
 
 	test("centroid2D", function()
 		for _, v in ipairs(testcentroid) do
 			local centroid, n
 			for _, pt in ipairs(v.points) do
-				centroid, n = dcsex.math.centroid2D(pt,
+				centroid, n = dcsext.math.centroid2D(pt,
 					centroid, n)
 			end
 
@@ -69,28 +69,28 @@ describe("validate math.", function()
 	end)
 
 	test("clamp", function()
-		assert.is.equal(dcsex.math.clamp(4,3,5), 4)
-		assert.is.equal(dcsex.math.clamp(6,3,5), 5)
-		assert.is.equal(dcsex.math.clamp(2,3,5), 3)
-		assert.is.equal(dcsex.math.clamp(5, 2, 4), 4)
-		assert.is.equal(dcsex.math.clamp(1, 2, 4), 2)
-		assert.is.equal(dcsex.math.clamp(2.4, 2, 4), 2.4)
+		assert.is.equal(dcsext.math.clamp(4,3,5), 4)
+		assert.is.equal(dcsext.math.clamp(6,3,5), 5)
+		assert.is.equal(dcsext.math.clamp(2,3,5), 3)
+		assert.is.equal(dcsext.math.clamp(5, 2, 4), 4)
+		assert.is.equal(dcsext.math.clamp(1, 2, 4), 2)
+		assert.is.equal(dcsext.math.clamp(2.4, 2, 4), 2.4)
 	end)
 
 	test("lerp", function()
-		assert.is.equal(dcsex.math.lerp(1, 2, .5), 1.5)
+		assert.is.equal(dcsext.math.lerp(1, 2, .5), 1.5)
 	end)
 
 	test("isBitSet", function()
-		assert.is_true(dcsex.math.isBitSet(3, 8))
+		assert.is_true(dcsext.math.isBitSet(3, 8))
 	end)
 
 	test("toBoolean", function()
-		assert.is_false(dcsex.math.toBoolean("off"))
+		assert.is_false(dcsext.math.toBoolean("off"))
 	end)
 
 	test("addStdDev", function()
 		math.randomseed(12345)
-		assert.is.equal(dcsex.math.addStdDev(1, 5), -3)
+		assert.is.equal(dcsext.math.addStdDev(1, 5), -3)
 	end)
 end)

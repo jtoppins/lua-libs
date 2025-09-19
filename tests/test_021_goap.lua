@@ -1,8 +1,8 @@
 #!/usr/bin/lua
 require('busted.runner')()
-require("dcsex")
-local class = dcsex.class
-local goap = dcsex.containers.goap
+require("dcsext")
+local class = dcsext.class
+local goap = dcsext.containers.goap
 
 local ID = {
 	["ISARMED"]     = "isArmed",     -- <bool>

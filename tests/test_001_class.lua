@@ -1,15 +1,15 @@
 #!/usr/bin/lua
 require('busted.runner')()
-require("dcsex")
+require("dcsext")
 
-describe("dcsex library", function()
+describe("dcsext library", function()
 	test("exports correctly", function()
-		assert(_G["dcsex"] ~= nil)
-		assert(dcsex.class ~= nil)
+		assert(_G["dcsext"] ~= nil)
+		assert(dcsext.class ~= nil)
 	end)
 end)
 
-local class = dcsex.class
+local class = dcsext.class
 
 describe("class() function", function()
 	test("has some default methods", function()
@@ -208,7 +208,7 @@ describe("instance metamethods", function()
 			return a.cost == other.cost
 		end
 
-		local A = dcsex.overrideOps(class("A"), A_mt)
+		local A = dcsext.overrideOps(class("A"), A_mt)
 		function A:__init(v)
 			self.cost = v
 		end

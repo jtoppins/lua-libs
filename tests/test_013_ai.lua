@@ -1,14 +1,14 @@
 #!/usr/bin/lua
 
 require 'busted.runner'()
-require("dcsex")
+require("dcsext")
 
-describe("validate dcsex.ai", function()
-	local vector = dcsex.vector
-	local ai = dcsex.ai
+describe("validate dcsext.ai", function()
+	local vector = dcsext.vector
+	local ai = dcsext.ai
 
 	test("tasks", function()
-		local task = dcsex.ai.options.create(
+		local task = dcsext.ai.options.create(
 				AI.Option.Air.id.REACTION_ON_THREAT,
 				AI.Option.Air.val.REACTION_ON_THREAT.PASSIVE_DEFENCE)
 		assert.are.same(task, {

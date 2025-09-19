@@ -1,8 +1,8 @@
 #!/usr/bin/lua
 require('busted.runner')()
-require("dcsex")
+require("dcsext")
 
-local utility = dcsex.utility
+local utility = dcsext.utility
 
 local function inputx(agent)
 	return agent.x
