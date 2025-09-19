@@ -7,19 +7,19 @@ on:
   push:
     branches:
     - master
-
-env:
-  PACKAGES: make lua5.1 lua-filesystem lua-check lua-busted
+    - dcsex
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-    - name: Install Packages
-      run: sudo apt-get install $PACKAGES
+      - name: Checkout Source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    - name: Checkout Source
-      uses: actions/checkout@v2
+      - name: Install Packages
+        run: ./scripts/devel-setup
 
-    - name: Run checks
-      run: make check
+      - name: Run checks
+        run: make V=1 check

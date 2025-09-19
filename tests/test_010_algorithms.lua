@@ -1,10 +1,10 @@
 #!/usr/bin/lua
 require('busted.runner')()
 require("os")
-require("libs")
+require("dcsext")
 
-local graph = libs.containers.Graph
-local search_astar = libs.algorithms.search_astar
+local graph = dcsext.containers.graph
+local search_astar = dcsext.algorithms.search_astar
 
 describe("algorithms", function()
 	test("A* search", function()

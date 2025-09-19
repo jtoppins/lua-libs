@@ -7,17 +7,76 @@ max_cyclomatic_complexity = 10
 read_globals = {
 	-- common lua globals
 	"lfs",
-	"libs",
+
+	-- DCS specific globals
+	"net",
+	"atmosphere",
+	"country",
+	"env",
+	"Unit",
+	"Object",
+	"StaticObject",
+	"Group",
+	"coalition",
+	"world",
+	"timer",
+	"trigger",
+	"missionCommands",
+	"coord",
+	"land",
+	"SceneryObject",
+	"AI",
+	"Controller",
+	"radio",
+	"Weapon",
+	"Airbase",
+	"VoiceChat",
+	"Disposition",
+	"Spot",
+	"Warehouse",
+
+	-- DCSEx specific
+	"dcsext",
 }
 
-files["src/libs/json.lua"] = {
+files["api/*"] = {
+	max_cyclomatic_complexity = false,
+	max_line_length = false,
+	ignore = {"212", "614",},
+	globals = {
+		-- DCS specific globals
+		"net",
+		"atmosphere",
+		"country",
+		"env",
+		"Unit",
+		"Object",
+		"StaticObject",
+		"Group",
+		"coalition",
+		"world",
+		"timer",
+		"trigger",
+		"missionCommands",
+		"coord",
+		"land",
+		"SceneryObject",
+		"AI",
+		"Controller",
+		"radio",
+		"Weapon",
+		"Airbase",
+		"VoiceChat",
+		"Disposition",
+		"Spot",
+		"Warehouse",
+	},
+}
+
+files["src/dcsext/json.lua"] = {
 	max_cyclomatic_complexity = false,
 	max_line_length = false,
 	ignore = {"614", "411"},
-}
-
-files["src/libs/utils.lua"] = {
-	max_cyclomatic_complexity = 12,
 }
 
 files["tests/*"] = {
@@ -29,5 +88,6 @@ files["tests/*"] = {
 		"pending",
 		"before_each",
 		"insulate",
+		"mock",
 	},
 }

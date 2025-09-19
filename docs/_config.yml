@@ -1,0 +1,50 @@
+title: DCS Extensions
+tagline: DCS mission scripting extensions
+description: Mission scripting framework extensions for Digital Combat Simulator (DCS) missions.
+release_link: "https://github.com/jtoppins/lua-libs/releases/latest"
+github_link:  "https://github.com/jtoppins/lua-libs"
+discord_link: "https://discord.gg/kG38MDqDrN"
+
+plugins:
+  - jekyll-default-layout
+  - jekyll-sitemap
+  - jekyll-github-metadata
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+collections:
+  reference:
+    permalink: "/:collection/:path/"
+    output: true
+
+just_the_docs:
+  collections:
+    reference:
+      name: API Reference
+      nav_fold: true
+      nav_exclude: false
+      search_exclude: false
+
+kramdown:
+  toc_levels: 2..3
+  auto_id_stripping: true
+
+theme: just-the-docs
+color_scheme: light
+
+url: https://jtoppins.github.io/lua-libs/
+
+aux_links:
+        "DCSex on GitHub":
+                - "https://github.com/jtoppins/lua-libs"
+        "Contact Us":
+                - "https://discord.gg/kG38MDqDrN"
+
+aux_links_new_tab: true
+
+enable_copy_code_button: true
