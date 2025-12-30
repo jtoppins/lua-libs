@@ -42,7 +42,7 @@ describe("ui objects", function()
 			{
 				ctor = dcsext.ui.Arrow,
 				arg = points,
-				stub = "arrorToAll",
+				stub = "arrowToAll",
 			}, {
 				ctor = dcsext.ui.Circle,
 				arg = points[1],
@@ -80,7 +80,10 @@ describe("ui objects", function()
 
 		for _, t in ipairs(objs) do
 			local obj = t.ctor(t.arg)
+			stub(trigger.action, t.stub)
 			obj:draw()
+			assert.stub(trigger.action[t.stub]).was.called()
+			trigger.action[t.stub]:revert()
 		end
 	end)
 end)

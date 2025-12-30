@@ -15,12 +15,6 @@ Mark.scopeType = {
 	["ALL"]       = "all",
 }
 
-local mark_funcs = {
-	[Mark.scopeType.COALITION] = trigger.action.markToCoalition,
-	[Mark.scopeType.GROUP]     = trigger.action.markToGroup,
-	[Mark.scopeType.ALL]       = trigger.action.markToAll,
-}
-
 --- Constructor.
 -- @param point 2d position where the mark should be placed.
 -- @param scope Mark.scopeType if the scope can only be seen
@@ -31,7 +25,6 @@ function Mark:__init(point, scope, scopeid)
 	DrawObject.__init(self, scope)
 	self.point = dcsext.vector.Vec3(point)
 	self.scope = scope or Mark.scopeType.ALL
-	self.func = mark_funcs[self.scope]
 	self.scopeid = scopeid
 
 	self.scopeType = nil
@@ -39,19 +32,26 @@ end
 
 --- Draw the mark.
 function Mark:__draw()
+	local mark_funcs = {
+		[Mark.scopeType.COALITION] = trigger.action.markToCoalition,
+		[Mark.scopeType.GROUP]     = trigger.action.markToGroup,
+		[Mark.scopeType.ALL]       = trigger.action.markToAll,
+	}
+	local func = mark_funcs[self.scope]
+
 	if self.scope == Mark.scopeType.ALL then
-		self.func(self.id,
-			  self.text,
-			  self.point:get(),
-			  self.readonly,
-			  self.message)
+		func(self.id,
+		     self.text,
+		     self.point:get(),
+		     self.readonly,
+		     self.message)
 	else
-		self.func(self.id,
-			  self.text,
-			  self.point:get(),
-			  self.scopeid,
-			  self.readonly,
-			  self.message)
+		func(self.id,
+		     self.text,
+		     self.point:get(),
+		     self.scopeid,
+		     self.readonly,
+		     self.message)
 	end
 end
 

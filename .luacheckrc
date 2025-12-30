@@ -89,5 +89,6 @@ files["tests/*"] = {
 		"before_each",
 		"insulate",
 		"mock",
+		"stub",
 	},
 }
