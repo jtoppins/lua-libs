@@ -31,6 +31,11 @@ local function class(name, base, ...)
 		newcls = mytable.merge(newcls,
 			mytable.shallowCopy(select(i, ...) or {}))
 	end
+	if base ~= nil and base.__mt ~= nil then
+		newcls.__mt = mytable.shallowCopy(base.__mt)
+	else
+		newcls.__mt = nil
+	end
 
 	local cls_mt = {
 		-- allow new object to be created directly,

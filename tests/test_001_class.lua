@@ -228,4 +228,20 @@ describe("instance metamethods", function()
 		assert.is_function(getmetatable(d).__eq)
 		assert.is_function(getmetatable(a).__eq)
 	end)
+
+	test("don't modify other classes", function()
+		local A = class("A")
+		function A.__mt.__tostring()
+			return "is A"
+		end
+		local B = class("B", A)
+		function B.__mt.__tostring()
+			return "is B"
+		end
+
+		local a = A()
+		local b = B()
+		assert.equal("is A", tostring(a))
+		assert.equal("is B", tostring(b))
+	end)
 end)
