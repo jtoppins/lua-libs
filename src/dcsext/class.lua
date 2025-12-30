@@ -3,22 +3,22 @@
 local mytable = require("dcsext.table")
 
 --- Return a table object (`obj`) that emulates properties of a class.
--- If the table defines an entry "__init" that is a function,
--- __init will be run when new instances are created.
+-- If the table defines an entry "\_\_init" that is a function,
+-- \_\_init will be run when new instances are created.
 -- A new instance of `obj` can be created by calling `newobj = obj()`.
--- Multiple inheritance is not tracked, thus this emulates java like
+-- Multiple inheritance is not tracked, emulating java like
 -- inhertiance where there is single inheritance but allows for
 -- multiple interfaces to be inherited.
 -- Since all data is shallow copied all class instances must create
--- their instances variables in their __init(). Thus if a class
--- inherits from multiple classes its __init much call each base class's
--- __init function, similar to python 2.0 classes.
+-- their instance variables in their \_\_init(). Thus if a class
+-- inherits from multiple classes its \_\_init much call each base
+-- class's \_\_init function, similar to python 2.0 classes.
 -- All methods and instance data is visiable and are regular lua table
 -- entries. There is no concept of data protection like private,
 -- as in C++, so care must be taken to not modify a class's date
 -- outside of its methods unless the data is intended to be public.
 -- A convention to identify private data and methods is to prefix
--- these field names with '_'.
+-- these field names with '\_'.
 --
 -- @param name name of the class
 -- @param base the base class this new class should inherit from
