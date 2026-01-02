@@ -3,7 +3,7 @@
 --- Load script modules into the mission environment before it is sanatized.
 
 local sep      = package.config:sub(1,1)
-local libspath = table.concat({lfs.writedir(), "Scripts", "mission"}, sep)
+local libspath = table.concat({lfs.writedir(), "Scripts"}, sep)
 local pkgpath  = table.concat({libspath, "?.lua"}, sep)
 
 if lfs.attributes(libspath) == nil then

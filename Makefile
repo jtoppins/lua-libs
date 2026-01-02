@@ -75,7 +75,6 @@ LUADOC_OPTS           = $(if $(Q),-q) -i
 TZ                    = "UTC 0"
 DISTPREFIX            := .build
 SCRIPTS_INSTALL_PATH  = $(INSTALLPREFIX)Scripts
-MISSION_LIB_PATH      = $(SCRIPTS_INSTALL_PATH)/mission
 CONFIGS_INSTALL_PATH  = $(INSTALLPREFIX)Config
 
 export PREFIX PROJ_VERSION
@@ -165,14 +164,14 @@ quiet_cmd_distzip     = ZIP     $@
 
 quiet_cmd_mod_remove  = RM      $@
       cmd_mod_remove  = \
-		rm -rf $(MISSION_LIB_PATH)/$(MODNAME)* \
+		rm -rf $(SCRIPT_INSTALL_PATH)/$(MODNAME)* \
 			$(SCRIPTS_INSTALL_PATH)/loadplugins.lua
 
 quiet_cmd_mod_install = INSTALL $@
       cmd_mod_install = \
-		mkdir -p $(MISSION_LIB_PATH); \
+		mkdir -p $(SCRIPTS_INSTALL_PATH); \
 		mkdir -p $(CONFIGS_INSTALL_PATH); \
-		cp -aL "$(srctree)"/src/* $(MISSION_LIB_PATH); \
+		cp -aL "$(srctree)"/src/* $(SCRIPTS_INSTALL_PATH); \
 		$(INSTALL) $(INSTALLFLAGS) -m 644 -t $(SCRIPTS_INSTALL_PATH) \
 			"$(srctree)"/scripts/loadplugins.lua; \
 		$(INSTALL) $(INSTALLFLAGS) --backup=numbered -m 644 \
