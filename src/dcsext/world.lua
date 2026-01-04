@@ -130,6 +130,112 @@ function _t.unit.setLife(unit, life)
 			"boolean")
 end
 
+--- Heading is the angle between the x and z components of the nose position
+-- vector.
+-- @param unitpos the table of vectors returned by Unit:getPosition()
+-- @return number in radians [0, 2*pi] relative to true north.
+function _t.unit.getHeading(unitpos)
+	local heading = math.atan2(unitpos.x.z, unitpos.x.x)
+
+	if heading < 0 then
+		heading = heading + 2 * math.pi
+	end
+	return heading
+end
+
+--- Pitch is the angle between the horizon and the nose position vector.
+-- @param unitpos the table of vectors returned by Unit:getPosition()
+-- @return number in radians [-pi/2, pi/2].
+function _t.unit.getPitch(unitpos)
+	return math.asin(unitpos.x.y)
+end
+
+--- Calculate the roll angle of the object.
+-- First, find a normal to y-axis and unitpos.x. Next, get the angle
+-- between vectors normal and unitpos.z.
+-- @param unitpos the table of vectors returned by Unit:getPosition()
+-- @return number in radians [-pi, pi]. Right roll positive.
+function _t.unit.getRoll(unitpos)
+	local Y = dcsext.vector.Vec3.new(0, 1, 0)
+	local normal = dcsext.vector.Vec3(unitpos.x) ^ Y
+	local roll = dcsext.vector.angle(dcsext.vector.Vec3(unitpos.z), normal)
+
+	-- For right roll, y component is negative.
+	if unitpos.z.y > 0 then
+		roll = -roll
+	end
+	return roll
+end
+
+--- Yaw is the angle between unitpos.x and the x and z axial velocities.
+-- @param unitpos the table of vectors returned by Unit:getPosition()
+-- @param unitvel the vector returned by Unit:getVelocity()
+-- @return number in radians [-pi, pi], right yaw is positive
+function _t.unit.getYaw(unitpos, unitvel)
+	unitvel = dcsext.vector.Vec3(unitvel)
+
+	if unitvel:magnitude() == 0 then
+		return 0
+	end
+
+	local X = dcsext.vector.Vec3.new(1, 0, 0)
+	local axialvel = {}
+
+	-- transform velocity components in direction of aircraft axes.
+	axialvel.x = dcsext.vector.dot(dcsext.vector.Vec3(unitpos.x), unitvel)
+	axialvel.z = dcsext.vector.dot(dcsext.vector.Vec3(unitpos.z), unitvel)
+
+	local AxialXZ = dcsext.vector.Vec3.new(axialvel.x, 0, axialvel.z)
+	local yaw = dcsext.vector.angle(X, AxialXZ)
+
+	if axialvel.z > 0 then
+		yaw = -yaw
+	end
+	return yaw
+end
+
+--- AoA is angle between unitpos.x and the x and y velocities.
+-- @param unitpos the table of vectors returned by Unit:getPosition()
+-- @param unitvel the vector returned by Unit:getVelocity()
+-- @return number in radians [-pi, pi]
+function _t.unit.getAoA(unitpos, unitvel)
+	unitvel = dcsext.vector.Vec3(unitvel)
+
+	if unitvel:magnitude() == 0 then
+		return 0
+	end
+
+	local X = dcsext.vector.Vec3.new(1, 0, 0)
+	local axialvel = {}
+
+	-- transform velocity components in direction of aircraft axes.
+	axialvel.x = dcsext.vector.dot(dcsext.vector.Vec3(unitpos.x), unitvel)
+	axialvel.y = dcsext.vector.dot(dcsext.vector.Vec3(unitpos.y), unitvel)
+
+	local AxialXY = dcsext.vector.Vec3.new(axialvel.x, axialvel.y, 0)
+	local aoa = dcsext.vector.angle(X, AxialXY)
+
+	if axialvel.y > 0 then
+		aoa = -aoa
+	end
+	return aoa
+end
+
+--- Climb angle is simply the angle formed by the components of the velocity
+-- vector.
+-- @param unitvel the vector returned by Unit:getVelocity()
+-- @return number in radians [-pi/2, pi/2], positive nose up
+function _t.unit.getClimbAngle(unitvel)
+	unitvel = dcsext.vector.Vec3(unitvel)
+	local mag = unitvel:magnitude()
+
+	if mag == 0 then
+		return 0
+	end
+
+	return math.asin(unitvel.y / mag)
+end
+
 _t.group = {}
 
 --- Is `grp` alive according to DCS?
