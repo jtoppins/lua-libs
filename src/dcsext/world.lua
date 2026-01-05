@@ -255,6 +255,61 @@ function _t.unit.getClimbAngle(unitvel)
 	return math.asin(unitvel.y / mag)
 end
 
+--- Equations derived from:
+-- https://aviation.stackexchange.com/questions/64735/
+--  how-to-calculate-equivalent-airspeed-immediately-from-calibrated-airspeed
+-- -and-
+-- https://en.wikipedia.org/wiki/Equivalent_airspeed
+local R_gas = 287.05 -- units: J/K/Kg
+local rho0  = 1.225 -- units: Kg / m^3
+local a0    = 340.2778 -- units: meters per sec
+local P0    = 101325 -- units: Pascals (Pa)
+
+--- Calculate the local mach number for a given calibrated airspeed (CAS)
+-- and static pressure at the altitude desired.
+-- @param cas desired calibrated airspeed
+-- @param ps static pressure
+function _t.unit.getMach(cas, ps)
+	local q = (((cas / a0)^2 / 5) + 1)^3.5 - 1
+	local M = math.sqrt(5 * (((q / ps) + 1)^(2/7) - 1))
+	return M
+end
+
+--- Calculate the equivalent airspeed (EAS) and static pressure at the
+-- altitude desired.
+-- @param cas desired calibrated airspeed
+-- @param ps static pressure
+function _t.unit.getEAS(cas, ps)
+	local mach = _t.unit.getMach(cas, ps)
+	local eas = a0 * mach * math.sqrt(ps / P0)
+	return eas
+end
+
+--- Calculate the ground speed for an aircraft given the desired
+-- calibrated airspeed (CAS) along a path defined by two points. This will
+-- take into account wind along the path. It is assumed CAS is equivalent
+-- to indicated airspeed (IAS).
+-- @param cas desired calibrated airspeed
+-- @param pointA start point
+-- @param pointB end point
+function _t.unit.CAStoGS(cas, pointA, pointB)
+	local temp, pressure, windvel, midpoint, rho, tas, gs, eas
+
+	pointA = dcsext.vector.Vec3(pointA)
+	pointB = dcsext.vector.Vec3(pointB)
+	midpoint = (pointA + pointB) / 2
+	windvel = atmosphere.getWind(midpoint:get())
+	temp, pressure = atmosphere.getTemperatureAndPressure(midpoint:get())
+	rho = pressure / (R_gas * temp)
+
+	eas = _t.unit.getEAS(cas, pressure)
+	tas = eas / math.sqrt(rho / rho0)
+	tas = tas * dcsext.vector.unitvec(pointB - pointA)
+	gs = tas + windvel
+
+	return gs:magnitude()
+end
+
 _t.group = {}
 
 --- Is `grp` alive according to DCS?
