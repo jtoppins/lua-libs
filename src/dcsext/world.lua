@@ -64,6 +64,31 @@ function _t.isEnemy(side1, side2)
 	return true
 end
 
+local R_gas = 287.05
+local rho0  = 1.225
+local a0    = 340.2778
+local P0    = 101325
+
+--- Calculate the ground speed for an aircraft given the desired
+-- indicated air speed along a path defined by two points. This will
+-- take into account wind along the path.
+function _t.IAStoGS(ias, pointA, pointB)
+	local temp, pressure, windvel, midpoint, rho, tas, gs
+
+	pointA = dcsext.vector.Vec3(pointA)
+	pointB = dcsext.vector.Vec3(pointB)
+	midpoint = (pointA + pointB) / 2
+	windvel = atmosphere.getWind(midpoint:get())
+	temp, pressure = atmosphere.getTemperatureAndPressure(midpoint:get())
+	rho = pressure / (R_gas * temp)
+
+	-- consider using EAS instead of TAS
+	tas = ias / math.sqrt(rho / rho0)
+	tas = tas * dcsext.vector.unitvec(pointB - pointA)
+	gs = tas + windvel
+
+	return gs:magnitude()
+end
 
 _t.unit = {}
 
