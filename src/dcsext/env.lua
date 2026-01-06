@@ -55,7 +55,7 @@ end
 -- @return string containing the stack trace
 function _t.errtraceback(err, version, lvl)
 	lvl = lvl or 0
-	version = version or ""
+	version = version or string.format("dcsext: %s", dcsext._VERSION)
 	return "\n---[ cut here ]---\n"..
 	       string.format("ERROR %s: ", version)..
 	       debug.traceback(err, lvl+1)..
@@ -67,7 +67,7 @@ end
 -- @param logger a dcsext.env.Logger object to print the trackback to.
 -- @param lvl level in the call stack to start the traceback or one.
 function _t.errhandler(err, logger, lvl)
-	local str = _t.errtraceback(err, lvl or 1)
+	local str = _t.errtraceback(err, nil, lvl or 1)
 	logger:error("%s", str)
 end
 
