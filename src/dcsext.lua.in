@@ -23,6 +23,7 @@ local libs = {
 	class        = require(pkgname..".class"),
 	containers   = require(pkgname..".containers"),
 	converter    = require(pkgname..".converter"),
+	Command      = require(pkgname..".Command"),
 	debug        = require(pkgname..".debug"),
 	enum         = require(pkgname..".enum"),
 	env          = require(pkgname..".env"),
