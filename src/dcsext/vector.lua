@@ -4,7 +4,6 @@
 
 require("math")
 local class = require("dcsext.class")
-local mytable = require("dcsext.table")
 
 --- Calculate the unit vector of `vec`.
 -- @param vec vector to calculate the unit vector of.
@@ -24,21 +23,20 @@ end
 -- and division. There is also support for strict equality and string
 -- serialization.
 local Vec2 = class("Vec2")
-local mt2d = {}
 
 -- String representation of vector
-function mt2d.__tostring(vec)
+function Vec2.__mt.__tostring(vec)
 	return string.format("(%g, %g)", vec.x, vec.y)
 end
 
 -- Strict equality.
-function mt2d.__eq(self, rhs)
+function Vec2.__mt.__eq(self, rhs)
 	return (type(rhs) == "table") and (self.x == rhs.x) and
 		(self.y == rhs.y)
 end
 
 -- Unitary minus
-function mt2d.__unm(self)
+function Vec2.__mt.__unm(self)
 	local v = {}
 	v.x = -self.x
 	v.y = -self.y
@@ -46,7 +44,7 @@ function mt2d.__unm(self)
 end
 
 -- Vector addition.
-function mt2d.__add(self, rhs)
+function Vec2.__mt.__add(self, rhs)
 	assert(type(rhs) == "table" and rhs.x ~= nil and rhs.y ~= nil,
 		"value error: illegal addition rhs not a 2D vector")
 	local v = {}
@@ -56,7 +54,7 @@ function mt2d.__add(self, rhs)
 end
 
 -- Vector subtraction.
-function mt2d.__sub(self, rhs)
+function Vec2.__mt.__sub(self, rhs)
 	assert(type(rhs) == "table" and rhs.x ~= nil and rhs.y ~= nil,
 		"value error: illegal subtraction rhs not a 2D vector")
 	local v = {}
@@ -66,7 +64,7 @@ function mt2d.__sub(self, rhs)
 end
 
 -- Scalar multiplication.
-function mt2d.__mul(self, s)
+function Vec2.__mt.__mul(self, s)
 	local v = {}
 
 	if type(self) == "number" and type(s) == "table" then
@@ -83,7 +81,7 @@ function mt2d.__mul(self, s)
 end
 
 -- Scalar division
-function mt2d.__div(self, rhs)
+function Vec2.__mt.__div(self, rhs)
 	assert(type(rhs) == "number",
 		"value error: illegal division rhs not a number")
 	local v = {}
@@ -106,9 +104,6 @@ function Vec2:__init(obj)
 	else
 		self.y = obj.y or 0
 	end
-	local curmt = getmetatable(self) or {}
-	curmt = mytable.merge(curmt, mt2d)
-	setmetatable(self, curmt)
 	self.new = nil
 end
 
@@ -164,21 +159,20 @@ end
 -- and division. There is also support for strict equality and string
 -- serialization.
 local Vec3 = class("Vec3")
-local mt3d = {}
 
 -- String representation of vector
-function mt3d.__tostring(vec)
+function Vec3.__mt.__tostring(vec)
 	return string.format("(%g, %g, %g)", vec.x, vec.y, vec.z)
 end
 
 -- Strict equality.
-function mt3d.__eq(self, rhs)
+function Vec3.__mt.__eq(self, rhs)
 	return (type(rhs) == "table") and (self.x == rhs.x) and
 	       (self.y == rhs.y) and (self.z == rhs.z)
 end
 
 -- Unitary minus
-function mt3d.__unm(self)
+function Vec3.__mt.__unm(self)
 	local v = {}
 	v.x = -self.x
 	v.y = -self.y
@@ -187,7 +181,7 @@ function mt3d.__unm(self)
 end
 
 -- Vector addition.
-function mt3d.__add(self, rhs)
+function Vec3.__mt.__add(self, rhs)
 	assert((type(rhs) == "table") and rhs.x ~= nil and
 		rhs.y ~= nil and rhs.z ~= nil,
 		"value error: illegal addition rhs not a 3D vector")
@@ -199,7 +193,7 @@ function mt3d.__add(self, rhs)
 end
 
 -- Vector subtraction.
-function mt3d.__sub(self, rhs)
+function Vec3.__mt.__sub(self, rhs)
 	assert((type(rhs) == "table") and rhs.x ~= nil and
 		rhs.y ~= nil and rhs.z ~= nil,
 		"value error: illegal subtraction rhs not a 3D vector")
@@ -211,7 +205,7 @@ function mt3d.__sub(self, rhs)
 end
 
 -- Scalar multiplication.
-function mt3d.__mul(self, s)
+function Vec3.__mt.__mul(self, s)
 	local v = {}
 
 	if type(self) == "number" and type(s) == "table" then
@@ -230,7 +224,7 @@ function mt3d.__mul(self, s)
 end
 
 -- Scalar division
-function mt3d.__div(self, rhs)
+function Vec3.__mt.__div(self, rhs)
 	assert(type(rhs) == "number",
 		"value error: illegal division rhs not a number")
 	local v = {}
@@ -241,7 +235,7 @@ function mt3d.__div(self, rhs)
 end
 
 -- Cross product '^'
-function mt3d.__pow(self, rhs)
+function Vec3.__mt.__pow(self, rhs)
 	assert((type(rhs) == "table") and rhs.x ~= nil and
 		rhs.y ~= nil and rhs.z ~= nil,
 		"value error: illegal cross-product rhs not a 3D vector")
@@ -269,9 +263,6 @@ function Vec3:__init(obj)
 		self.y = obj.alt or 0
 		self.z = obj.y or 0
 	end
-	local curmt = getmetatable(self) or {}
-	curmt = mytable.merge(curmt, mt3d)
-	setmetatable(self, curmt)
 	self.new = nil
 end
 
