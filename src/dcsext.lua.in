@@ -25,6 +25,7 @@ local libs = {
 	converter    = require(pkgname..".converter"),
 	Command      = require(pkgname..".Command"),
 	debug        = require(pkgname..".debug"),
+	EventHandler = require(pkgname..".EventHandler"),
 	enum         = require(pkgname..".enum"),
 	env          = require(pkgname..".env"),
 	io           = require(pkgname..".io"),
