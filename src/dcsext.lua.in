@@ -31,6 +31,7 @@ local libs = {
 	io           = require(pkgname..".io"),
 	json         = require(pkgname..".json"),
 	math         = require(pkgname..".math"),
+	Observable   = require(pkgname..".Observable"),
 	string       = require(pkgname..".string"),
 	setters      = require(pkgname..".setters"),
 	table        = require(pkgname..".table"),
