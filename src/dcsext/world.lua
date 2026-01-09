@@ -64,6 +64,11 @@ function _t.isEnemy(side1, side2)
 	return true
 end
 
+--- Notify all of DCS of a custom event.
+-- @param eventdata Event data.
+function _t.notify(eventdata)
+	world.onEvent(eventdata)
+end
 
 _t.unit = {}
 
