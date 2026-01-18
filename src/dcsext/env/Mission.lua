@@ -101,6 +101,32 @@ function Mission.processCoalition(coatbl, logger)
 	return groups
 end
 
+--- A nil filter function.
+-- @return true always
+function Mission.noFilter()
+	return true
+end
+
+function Mission.isPlayerUnit(unit)
+	if unit.skill == AI.Skill.CLIENT or
+	   unit.skill == AI.Skill.PLAYER then
+		return true
+	end
+	return false
+end
+
+--- Reads a DCS mission group definition and determines if there
+-- are any player/client units defined in the group.
+-- @param grp the mission group table to read.
+function Mission.isPlayerGroup(grp)
+	for _, unit in ipairs(grp.data.units) do
+		if Mission.isPlayerUnit(unit) == true then
+			return true
+		end
+	end
+	return false
+end
+
 --- Constructor.
 function Mission:__init(miztbl, logger)
 	self._logger = logger or dcsext.env.Logger.getByName("DCSEXT")
@@ -158,6 +184,45 @@ end
 
 function Mission:getGroups()
 	return self.groups
+end
+
+function Mission:iterateGroups(filter)
+	filter = filter or Mission.noFilter
+	local function fnext(state, index)
+		local idx = index
+		local grp
+		repeat
+			idx, grp = next(state, idx)
+			if grp == nil then
+				return nil
+			end
+		until(filter(grp))
+		return idx, grp
+	end
+	return fnext, self.groups, nil
+end
+
+function Mission:iterateUnits(filter)
+	filter = filter or Mission.noFilter
+	local units = {}
+	local function fnext(state, index)
+		local idx = index
+		local unit
+		repeat
+			idx, unit = next(state, idx)
+			if unit == nil then
+				return nil
+			end
+		until(filter(unit))
+		return idx, unit
+	end
+
+	for _, grp in self:iterateGroups() do
+		for _, unit in ipairs(grp.data.units or {}) do
+			table.insert(units, unit)
+		end
+	end
+	return fnext, units, nil
 end
 
 return Mission
