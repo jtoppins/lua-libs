@@ -4,6 +4,16 @@
 
 local _t = {}
 
+--- Tests to see if a table has a key that is defined as a
+-- function. Metatables will be used during the test.
+-- @param tbl the table to check
+-- @param func the function name string to test for existance of
+-- @return boolean, true means the table has an entry that is a
+-- function
+function _t.hasFunc(tbl, func)
+	return type(tbl[func]) == "function"
+end
+
 _t.iterators = {}
 
 --- Iterate a set of objects and return objects that have a given method.
@@ -23,7 +33,7 @@ function _t.iterators.hasFunc(tbl, iterator, func)
 			if sys == nil then
 				return nil
 			end
-		until(type(sys[func]) == "function")
+		until(_t.hasFunc(sys, func))
 		return idx, sys
 	end
 	return fnext, state, start
