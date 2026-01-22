@@ -10,7 +10,7 @@ local myos    = require("os")
 local class   = require("dcsext.class")
 local check   = require("dcsext.check")
 
-local function execute(self, _, time)
+local function execute(self, time)
 	self._logger:debug("executing: %s", tostring(self))
 	local results = { pcall(self.run, self, time) }
 
@@ -28,7 +28,7 @@ local function execute(self, _, time)
 	return unpack(results)
 end
 
-local function timedexecute(self, _, time)
+local function timedexecute(self, time)
 	local tstart = myos.clock()
 	local results = { execute(self, nil, time) }
 	self._logger:debug("'%s' exec time: %5.2fms", self.name,
@@ -97,6 +97,12 @@ function Command:__init(delay, name, func, ...)
 		self.args = {select(1, ...)}
 	end
 
+	if _G.DCSEXT_PROFILE == true then
+		self._exec = timedexecute
+	else
+		self._exec = execute
+	end
+
 	self.PRIORITY = nil
 	self.IDNONE   = nil
 end
@@ -111,7 +117,7 @@ function Command:register()
 	if self.id ~= Command.IDNONE then
 		return
 	end
-	self.id = timer.scheduleFunction(self, nil,
+	self.id = timer.scheduleFunction(self._exec, self,
 					 timer.getTime() + self.delay)
 end
 
