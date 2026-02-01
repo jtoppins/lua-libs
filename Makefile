@@ -167,7 +167,7 @@ quiet_cmd_mod_remove  = RM      $@
 		rm -rf $(SCRIPT_INSTALL_PATH)/$(MODNAME)* \
 			$(SCRIPTS_INSTALL_PATH)/loadplugins.lua
 
-quiet_cmd_mod_install = INSTALL $@
+quiet_cmd_mod_install = INSTALL $(MODNAME) PREFIX=$(PREFIX)
       cmd_mod_install = \
 		mkdir -p $(SCRIPTS_INSTALL_PATH); \
 		mkdir -p $(CONFIGS_INSTALL_PATH); \
