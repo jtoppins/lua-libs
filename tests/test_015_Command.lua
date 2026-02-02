@@ -10,7 +10,7 @@ describe("Command class", function()
 	end
 
 	test("has a constructor", function()
-		cmd = dcsext.Command(5, "foo", foo)
+		cmd = dcsext.interfaces.Command(5, "foo", foo)
 		assert.equal("Command.foo", tostring(cmd))
 	end)
 
