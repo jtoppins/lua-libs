@@ -31,7 +31,7 @@ end
 local function timedexecute(self, time)
 	local tstart = myos.clock()
 	local results = { execute(self, nil, time) }
-	self._logger:debug("'%s' exec time: %5.2fms", self.name,
+	self._logger:debug("'%s' exec time: %5.2fms", tostring(self),
 		(myos.clock()-tstart)*1000)
 	return unpack(results)
 end
