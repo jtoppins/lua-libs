@@ -3,7 +3,12 @@ name: Create Release
 on:
   push:
     tags:
-    - 'v*'
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name'
+        required: true
 
 jobs:
   build:
