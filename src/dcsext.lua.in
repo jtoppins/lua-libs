@@ -32,6 +32,7 @@ local libs = {
 	math         = require(pkgname..".math"),
 	overrideOps  = require(pkgname..".overrideOps"),
 	setters      = require(pkgname..".setters"),
+	systems      = require(pkgname..".systems"),
 	string       = require(pkgname..".string"),
 	table        = require(pkgname..".table"),
 	tacan        = require(pkgname..".tacan"),

@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
 --- Implements a Observable interface.
--- @classmod dct.libs.Observable
+-- @classmod dcsext.interfaces.Observable
 
 local myos  = require("os")
 local class = require("dcsext.class")

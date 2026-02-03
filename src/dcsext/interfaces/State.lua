@@ -1,6 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
 --- State class.
+-- @classmod dcsext.interfaces.State
 
 local class = require("dcsext.class")
 

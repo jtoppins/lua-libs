@@ -4,7 +4,7 @@ local class = require("dcsext.class")
 
 --- EventHandler class. Provides a common way for objects to process
 -- events.
--- @classmod dcsext.EventHandler
+-- @classmod dcsext.interfaces.EventHandler
 local EventHandler = class()
 
 --- Class constructor.

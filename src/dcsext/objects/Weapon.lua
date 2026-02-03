@@ -1,5 +1,9 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Weapon class.
+-- Is a representation of a DCS Weapon object.
+-- @classmod dcsext.objects.Weapon
+
 local class     = require("dcsext.class")
 local vector    = require("dcsext.vector")
 
@@ -16,9 +20,6 @@ local function trimTypeName(typename)
         end
 end
 
---- Weapon.
--- Is a representation of a DCS Weapon object.
--- @classmod Weapon
 local Weapon = class("Weapon")
 
 --- Constructor.

@@ -1,5 +1,11 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- WeaponImpactTracker.
+-- Tracks DCS Weapon objects to impact. Only weapons conforming to
+-- isWpnValid will be tracked. Will emit a custom impact event to all
+-- of DCS upon impact detection.
+-- @classmod dcsext.systems.WeaponImpactTracker
+
 local myos    = require("os")
 local class   = require("dcsext.class")
 local Command = require("dcsext.interfaces.Command")
@@ -20,11 +26,6 @@ local function buildImpactEvent(id, wpn)
 	return event
 end
 
---- WeaponImpactTracker.
--- Tracks DCS Weapon objects to impact. Only weapons conforming to
--- isWpnValid will be tracked. Will emit a custom impact event to all
--- of DCS upon impact detection.
--- @classmod WeaponImpactTracker
 local WeaponImpactTracker = class("WeaponImpactTracker", Command,
 				  EventHandler)
 

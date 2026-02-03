@@ -2,7 +2,7 @@
 
 --- Command class to run a deferred function. Provides a basic Command
 -- class to call an arbitrary function at a later time.
--- @classmod dcsext.Command
+-- @classmod dcsext.interfaces.Command
 
 -- DCS sanitizes its environment so we have to keep a local reference to
 -- the os table.
