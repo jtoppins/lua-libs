@@ -18,7 +18,7 @@ end
 
 --- Weapon.
 -- Is a representation of a DCS Weapon object.
--- @type Weapon
+-- @classmod Weapon
 local Weapon = class("Weapon")
 
 --- Constructor.

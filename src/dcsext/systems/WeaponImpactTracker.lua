@@ -24,7 +24,7 @@ end
 -- Tracks DCS Weapon objects to impact. Only weapons conforming to
 -- isWpnValid will be tracked. Will emit a custom impact event to all
 -- of DCS upon impact detection.
--- @type WeaponImpactTracker
+-- @classmod WeaponImpactTracker
 local WeaponImpactTracker = class("WeaponImpactTracker", Command,
 				  EventHandler)
 
