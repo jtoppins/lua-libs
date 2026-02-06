@@ -7,6 +7,7 @@ busted._all = {
 	output = "plainTerminal",
 	pattern = "test_",
 	ROOT = { ".", },
+	verbose = true,
 }
 
 return busted

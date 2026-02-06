@@ -6,6 +6,7 @@ local containers = {
 	Queue         = require("dcsext.containers.Queue"),
 	PriorityQueue = require("dcsext.containers.PriorityQueue"),
 	RingBuffer    = require("dcsext.containers.RingBuffer"),
+	SpatialHashGrid = require("dcsext.containers.SpatialHashGrid"),
 }
 
 return containers

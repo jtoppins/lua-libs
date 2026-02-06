@@ -231,3 +231,99 @@ describe("containers.Graph", function()
 		assert(next(G:neighbors(e)) == nil)
 	end)
 end)
+
+
+describe("containers.SpatialHashGrid", function()
+	math.randomseed(300)
+	local hashgrid = dcsext.containers.SpatialHashGrid
+
+	test("perf", function()
+		local NUM_OBJECTS = 1000
+		local ITERATIONS  = 10000
+		local TABLESIZE   = 1000
+		local CELLSIZE    = 40
+		local BOUNDS      = {
+			["min"] = dcsext.vector.Vec2.new(-1000.0, -1000.0),
+			["max"] = dcsext.vector.Vec2.new(1000.0, 1000.0)
+		}
+
+		local OBJ_POSITIONS = {}
+		for i = 1, NUM_OBJECTS do
+			OBJ_POSITIONS[i] =
+				dcsext.vector.Vec2.new(
+					math.random(BOUNDS.min.x, BOUNDS.max.x),
+					math.random(BOUNDS.min.y, BOUNDS.max.y)
+
+				)
+		end
+
+		local OBJ_QUERIES = {}
+		for i = 1, NUM_OBJECTS do
+			OBJ_QUERIES[i] = dcsext.vector.Vec2.new(
+				math.random(BOUNDS.min.x, BOUNDS.max.x),
+				math.random(BOUNDS.min.y, BOUNDS.max.y)
+			)
+		end
+
+		local OBJ_MOVES = {}
+		for i = 1, NUM_OBJECTS do
+			OBJ_MOVES[i] = dcsext.vector.Vec2.new(
+				math.random(), math.random()
+			)
+		end
+
+		local GridTester = dcsext.class("GridTester")
+		function GridTester:__init(cls)
+			self._grid = cls(TABLESIZE, CELLSIZE)
+			self._objects = {}
+
+			for i = 1, NUM_OBJECTS do
+				local obj = self._grid:newObject(
+					OBJ_POSITIONS[i], 15
+				)
+				self._objects[i] = obj
+			end
+		end
+
+		function GridTester:findNearby()
+			local radius = 20
+
+			local start = os.clock()
+			for i = 1, ITERATIONS do
+				local x = (i % #OBJ_QUERIES) + 1
+				self._grid:findNear(OBJ_QUERIES[x], radius)
+			end
+			local total = os.clock() - start
+			return total
+		end
+
+		function GridTester:update()
+			for i = 1, #(self._objects) do
+				local obj = self._objects[i]
+				obj.position = dcsext.vector.Vec2(OBJ_POSITIONS[i])
+				self._grid:update(obj)
+			end
+
+			local start = os.clock()
+			for i = 1, #(self._objects) do
+				local obj = self._objects[i]
+				obj.position = obj.position + OBJ_MOVES[i]
+				self._grid:update(obj)
+			end
+			local total = os.clock() - start
+			return total
+		end
+
+		local gridfast = GridTester(hashgrid)
+
+		print("FindNearby: " .. gridfast:findNearby() .. "s")
+		print("----------------")
+		print("FindNearby: " .. gridfast:findNearby() .. "s")
+		print("----------------")
+		print("----------------")
+		print("Update: " .. gridfast:update() .. "s")
+		print("----------------")
+		print("Update: " .. gridfast:update() .. "s")
+
+	end)
+end)
