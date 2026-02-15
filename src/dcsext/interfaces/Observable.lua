@@ -26,10 +26,9 @@ local Observable = class("Observable")
 
 --- Constructor.
 -- @param logger reference to dct.libs.Logger instance
-function Observable:__init(logger)
+function Observable:__init()
 	if self._logger == nil then
-		self._logger = logger or
-				dcsext.env.Logger.getByName("Observable")
+		self._logger = dcsext.env.Logger.getByName(self.__clsname)
 	end
 	self._observers = {}
 	setmetatable(self._observers, { __mode = "k", })

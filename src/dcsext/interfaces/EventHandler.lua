@@ -9,6 +9,10 @@ local EventHandler = class()
 
 --- Class constructor.
 function EventHandler:__init()
+	if self._logger == nil then
+		self._logger = dcsext.env.Logger.getByName(self.__clsname)
+	end
+
 	self._eventhandlers = {}
 end
 
@@ -31,6 +35,9 @@ end
 --- Process a DCS event.
 -- @param event the event object to dispatch
 function EventHandler:onEvent(event)
+	self._logger:debug("onEvent; event.id: %d (%s)",
+		event.id,
+		tostring(dcsext.table.getKey(world.event, event.id)))
 	local handler = self._eventhandlers[event.id]
 	if handler ~= nil then
 		handler(self, event)

@@ -85,7 +85,9 @@ end
 --   command should not be requeue.
 -- @param ... arguments to pass to the function
 function Command:__init(delay, name, func, ...)
-	self._logger = dcsext.env.Logger.getByName("Command")
+	if self._logger == nil then
+		self._logger = dcsext.env.Logger.getByName(self.__clsname)
+	end
 	self:_property("delay", check.number(delay), dcsext.setters.setNumber)
 	self:_property("priority", cmdpriority.NORMAL, setPriority)
 	self:_property("requeueOnError", false, dcsext.setters.setBoolean)
