@@ -73,15 +73,16 @@ end
 function WeaponImpactTracker:handleShot(event)
 	if not self:isWpnValid(event) then
 		self._logger:debug("weapon not valid typename: %s; initiator: %s",
-			self.__clsname,
 			event.weapon:getTypeName(),
 			event.initiator:getName())
 		return
 	end
-	self.trackedwpns[event.weapon.id_] =
+	local wpn =
 		dcsext.objects.Weapon(event.weapon,
 				      event.initiator,
 				      self.weaponLifetime)
+	self._logger:debug("tracking weapon: %s", tostring(wpn))
+	self.trackedwpns[event.weapon.id_] = wpn
 end
 
 --- Update each tracked weapon and emit an impact event for each weapon
@@ -100,6 +101,7 @@ function WeaponImpactTracker:run(time)
 	end
 
 	for _, wpn in pairs(impacts) do
+		self._logger:debug("impact event for: %s", tostring(wpn))
 		dcsext.world.notify(buildImpactEvent(self.eventID, wpn))
 	end
 

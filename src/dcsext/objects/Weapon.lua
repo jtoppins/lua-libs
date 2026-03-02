@@ -22,6 +22,11 @@ end
 
 local Weapon = class("Weapon")
 
+function Weapon.__mt.__tostring(cls)
+	return string.format("%s(t:%s,p:%f)", cls.__clsname,
+			     cls.type, cls.power)
+end
+
 --- Constructor.
 function Weapon:__init(wpn, initiator, timeout)
 	self.start_time  = timer.getTime()
