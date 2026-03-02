@@ -35,12 +35,17 @@ end
 --- Process a DCS event.
 -- @param event the event object to dispatch
 function EventHandler:onEvent(event)
+	local handler = self._eventhandlers[event.id]
+	if handler == nil then
+		return
+	end
+
 	self._logger:debug("onEvent; event.id: %d (%s)",
 		event.id,
 		tostring(dcsext.table.getKey(world.event, event.id)))
-	local handler = self._eventhandlers[event.id]
-	if handler ~= nil then
-		handler(self, event)
+	local ok, errmsg = pcall(handler, self, event)
+	if not ok then
+		dcsext.env.errhandler(errmsg, self._logger, 2)
 	end
 end
 
