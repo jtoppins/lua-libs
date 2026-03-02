@@ -9,7 +9,7 @@
 local myos    = require("os")
 local class   = require("dcsext.class")
 local Command = require("dcsext.interfaces.Command")
-local EventHandler = require("dcsext.interfaces.Command")
+local EventHandler = require("dcsext.interfaces.EventHandler")
 local LOOKAHEAD = 2 -- scales update rate to determine how many seconds
 		    -- ahead to predict a weapon's impact point
 
