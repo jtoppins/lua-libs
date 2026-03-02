@@ -18,9 +18,10 @@ local allowedmsltypes = {
 	[Weapon.MissileCategory.OTHER]  = true,
 }
 
-local function buildImpactEvent(id, wpn)
+local function buildImpactEvent(id, wpn, time)
 	local event = {}
 	event.id = id
+	event.time = time
 	event.initiator = wpn
 	event.point = wpn:getImpactPoint()
 	return event
@@ -102,7 +103,7 @@ function WeaponImpactTracker:run(time)
 
 	for _, wpn in pairs(impacts) do
 		self._logger:debug("impact event for: %s", tostring(wpn))
-		dcsext.world.notify(buildImpactEvent(self.eventID, wpn))
+		dcsext.world.notify(buildImpactEvent(self.eventID, wpn, time))
 	end
 
 	if _G.DCSEXT_PROFILE == true then
