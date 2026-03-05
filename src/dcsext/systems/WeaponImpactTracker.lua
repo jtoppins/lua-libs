@@ -99,9 +99,16 @@ function WeaponImpactTracker:run(time)
 	for id, wpn in pairs(self.trackedwpns) do
 		wpn:update(time, self.lookahead)
 		if wpn:hasImpacted() and not wpn:exist() then
+			self._logger:debug("impacted(%s)", tostring(wpn))
+			table.insert(impacts, wpn)
+			self.trackedwpns[id] = nil
+		elseif wpn.timeout == false and not wpn.weapon:isExist() then
+			self._logger:debug("removed(%s)", tostring(wpn))
+			wpn.impactpt = wpn.pos:get()
 			table.insert(impacts, wpn)
 			self.trackedwpns[id] = nil
 		elseif not wpn:exist() then
+			self._logger:debug("timeout(%s)", tostring(wpn))
 			self.trackedwpns[id] = nil
 		end
 	end
