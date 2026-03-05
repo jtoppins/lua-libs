@@ -23,8 +23,8 @@ end
 local Weapon = class("Weapon")
 
 function Weapon.__mt.__tostring(cls)
-	return string.format("%s(t:%s,p:%f)", cls.__clsname,
-			     cls.type, cls.power)
+	return string.format("%s(t:%s,p:%.1f)", cls.__clsname,
+			     cls.type, cls.power or 0)
 end
 
 --- Constructor.
@@ -64,7 +64,11 @@ end
 --- Gets the warhead's explosive power.
 -- @treturn number the mass of the explosive used in the warhead.
 function Weapon:getWarheadPower()
-	return self.desc.warhead[warheadtypes[self.desc.warhead.type]]
+	if self.desc.warhead == nil then
+		return 0
+	end
+	local t = warheadtypes[self.desc.warhead.type]
+	return self.desc.warhead[t]
 end
 
 --- Get the impact point. This is the point where the weapon is predicted
