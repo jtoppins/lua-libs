@@ -45,6 +45,11 @@ function WeaponImpactTracker:__init(updateRate, eventID, weaponLifetime)
 	})
 end
 
+function WeaponImpactTracker:register(startdelay)
+	EventHandler.register(self)
+	Command.register(self, startdelay)
+end
+
 --- Only DCS Weapon objects where this function returns true will be
 -- considered. Only consider Weapons not fired from air defence units
 -- and have HE warheads. This method is intended to be overriden so
@@ -110,6 +115,8 @@ function WeaponImpactTracker:run(time)
 		self._logger:debug("'%s.update' exec time: %5.2fms",
 			tostring(self), (myos.clock()-tstart)*1000)
 	end
+
+	return time + self.delay
 end
 
 return WeaponImpactTracker
