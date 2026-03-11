@@ -70,6 +70,20 @@ function _t.notify(eventdata)
 	world.onEvent(eventdata)
 end
 
+--- Spawn a template.
+-- @param tpl template table having members countryid, category, and data
+-- @return a reference to the spawned object or nil if unsuccessful
+function _t.spawn(tpl)
+	local obj
+
+	if tpl.category == Unit.Category.STRUCTURE then
+		obj = coalition.addStaticObject(tpl.countryid, tpl.data)
+	else
+		obj = coalition.addGroup(tpl.countryid, tpl.category, tpl.data)
+	end
+	return obj
+end
+
 _t.unit = {}
 
 --- Is `unit` controlled by a player?
