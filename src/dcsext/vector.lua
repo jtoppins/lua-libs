@@ -427,4 +427,15 @@ function _t.angle(A, B)
 	return math.acos(dot / (A:magnitude() * B:magnitude()))
 end
 
+--- Projection of A onto B.
+-- @param A
+-- @param B
+-- @return the projected vector of A onto B
+-- @within vector
+function _t.projection(A, B)
+	local dotAB = _t.dot(A, B)
+	local dotBB = _t.dot(B, B)
+	return (dotAB / dotBB) * B
+end
+
 return _t

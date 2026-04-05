@@ -70,6 +70,12 @@ describe("validate dcsext.vector.Vec2", function()
 		assert.is.equal(1000,
 			math.ceil(vector.unitvec(a):magnitude() * 1000))
 	end)
+	test("projection", function()
+		local A = vector.Vec2.new(3, 4)
+		local B = vector.Vec2.new(4, 0)
+		assert.is.same({x = 3, y = 0},
+			(vector.projection(A, B)):get())
+	end)
 end)
 
 describe("validate dcsext.vector.Vec3", function()
