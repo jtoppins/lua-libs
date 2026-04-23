@@ -177,7 +177,7 @@ quiet_cmd_mod_install = INSTALL $(MODNAME) PREFIX=$(PREFIX)
 		$(INSTALL) $(INSTALLFLAGS) --backup=numbered -m 644 \
 			-t $(CONFIGS_INSTALL_PATH) \
 			"$(srctree)"/config/missionplugins.cfg; \
-		find $(INSTALLPREFIX) \( -name '*.lua.in' \) -type f \
+		find $(SCRIPTS_INSTALL_PATH) \( -name '*.lua.in' \) -type f \
 			-exec rm -rf {} +
 
 quiet_cmd_rmfiles = CLEAN   $(rm-files)
