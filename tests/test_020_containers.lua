@@ -316,14 +316,9 @@ describe("containers.SpatialHashGrid", function()
 
 		local gridfast = GridTester(hashgrid)
 
-		print("FindNearby: " .. gridfast:findNearby() .. "s")
-		print("----------------")
-		print("FindNearby: " .. gridfast:findNearby() .. "s")
-		print("----------------")
-		print("----------------")
-		print("Update: " .. gridfast:update() .. "s")
-		print("----------------")
-		print("Update: " .. gridfast:update() .. "s")
-
+		gridfast:findNearby()
+		gridfast:findNearby()
+		gridfast:update()
+		gridfast:update()
 	end)
 end)
