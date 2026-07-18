@@ -17,4 +17,18 @@ describe("validate dcsext.world", function()
 		local markid = dcsext.world.getNextMarkID()
 		assert.is.equal(dcsext.world.getCurrentMarkID(), markid)
 	end)
+
+	test("", function()
+		local position = {
+			p = {x = 0, y = 0, z = 0},
+			x = {x = 0, y = 0.34, z = 1},
+			y = {x = 1, y = 1, z = 1},
+			z = {x = 1, y = 1, z = 1},
+		}
+
+		assert.is.near(dcsext.world.unit.getHeading(position),
+				1.571, 0.001)
+		assert.is.near(dcsext.world.unit.getPitch(position),
+				0.347, 0.001)
+	end)
 end)
