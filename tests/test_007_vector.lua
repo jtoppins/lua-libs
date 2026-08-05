@@ -3,6 +3,27 @@
 require 'busted.runner'()
 require("dcsext")
 
+local say = require("say")
+
+local function same_vector(_state, args)
+	if #args < 2 or not (type(args[1]) == "table" and
+			     type(args[2]) == "table") then
+		return false
+	end
+	local tolerance = args[3] or 0.00001
+
+	assert.is.near(args[1].x, args[2].x, tolerance)
+	assert.is.near(args[1].y, args[2].y, tolerance)
+	assert.is.near(args[1].z, args[2].z, tolerance)
+	return true
+end
+
+say:set("assertion.same_vector.positive", "Expected %s \ngot: %s")
+say:set("assertion.same_vector.positive", "Expected %s \ngot: %s")
+assert:register("assertion", "same_vector", same_vector,
+		"assertion.same_vector.positive",
+		"assertion.same_vector.negative")
+
 describe("validate dcsext.vector.Vec2", function()
 	local vector
 	local a, b, c
@@ -147,4 +168,52 @@ describe("validate dcsext.vector.Vec3", function()
 		assert.is.equal(1000,
 			math.ceil(vector.unitvec(a):magnitude() * 1000))
 	end)
+end)
+
+describe("validate dcsext.vector.Vec3:rotAxis", function()
+	local test_cases = {
+		{
+			["name"]   = "Identity",
+			["vector"] = dcsext.vector.Vec3.new(1, 0, 0),
+			["axis"]   = dcsext.vector.Vec3.new(0, 1, 0),
+			["theta"]  = 0,
+			["result"] = dcsext.vector.Vec3.new(1, 0, 0)
+		}, {
+			["name"]   = "Rotate X around Y by 90 -> Should be -Z",
+			["vector"] = dcsext.vector.Vec3.new(1, 0, 0),
+			["axis"]   = dcsext.vector.Vec3.new(0, 1, 0),
+			["theta"]  = math.rad(90),
+			["result"] = dcsext.vector.Vec3.new(0, 0, -1)
+		}, {
+			["name"]   = "Rotate X around Z by 90 -> Should be Y",
+			["vector"] = dcsext.vector.Vec3.new(1, 0, 0),
+			["axis"]   = dcsext.vector.Vec3.new(0, 0, 1),
+			["theta"]  = math.rad(90),
+			["result"] = dcsext.vector.Vec3.new(0, 1, 0)
+		}, {
+			["name"]   = "Parallel",
+			["vector"] = dcsext.vector.Vec3.new(0, 0, 5),
+			["axis"]   = dcsext.vector.Vec3.new(0, 0, 1),
+			["theta"]  = math.rad(45),
+			["result"] = dcsext.vector.Vec3.new(0, 0, 5)
+		}, {
+			["name"]   = "180 flip around diagonal (1, 1, 0)",
+			["vector"] = dcsext.vector.Vec3.new(1, 0, 0),
+			["axis"]   = dcsext.vector.Vec3.new(1, 1, 0),
+			["theta"]  = math.rad(180),
+			["result"] = dcsext.vector.Vec3.new(0, 1, 0)
+		}
+	}
+
+	local function gen_tests(func)
+		for k, t in ipairs(test_cases) do
+			test(string.format("Test %d: %s", k, t.name),
+			     function()
+				local r = t.vector[func](t.vector, t.axis, t.theta)
+				assert.same_vector(t.result, r)
+			end)
+		end
+	end
+
+	gen_tests("rotAxis")
 end)

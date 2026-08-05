@@ -5,6 +5,17 @@
 require("math")
 local class = require("dcsext.class")
 
+local function _dotproduct(U, V)
+	local sum = 0
+
+	for _, n in ipairs({'x', 'y', 'z'}) do
+		if U[n] and V[n] then
+			sum = sum + (U[n] * V[n])
+		end
+	end
+	return sum
+end
+
 --- Calculate the unit vector of `vec`.
 -- @param vec vector to calculate the unit vector of.
 -- @return unit vector of vec
@@ -340,30 +351,17 @@ function Vec3:rotY(theta)
 	return Vec3(v)
 end
 
---- Rotate Vec3 about an arbitrary axis.
+--- Rotate Vec3 about an arbitrary axis using Rodrigues' rotation
+-- formula
 function Vec3:rotAxis(axis, theta)
-	local ax = unitvec(axis)
+	local k = unitvec(Vec3(axis))
 	local cosa = math.cos(theta)
 	local sina = math.sin(theta)
 	local versa = 1.0 - cosa
-	local xy = ax.x * ax.y
-	local yz = ax.y * ax.z
-	local zx = ax.z * ax.x
-	local sinx = ax.x * sina
-	local siny = ax.y * sina
-	local sinz = ax.z * sina
-	local m10 = ax.x * ax.x * versa + cosa
-	local m11 = xy * versa + sinz
-	local m12 = zx * versa - siny
-	local m20 = xy * versa - sinz
-	local m21 = ax.y * ax.y * versa + cosa
-	local m22 = yz * versa + sinx
-	local m30 = zx * versa + siny
-	local m31 = yz * versa - sinx
-	local m32 = ax.z * ax.z * versa + cosa
-	return Vec3.new(m10 * self.x + m20 * self.y + m30 * self.z,
-			m11 * self.x + m21 * self.y + m31 * self.z,
-			m12 * self.x + m22 * self.y + m32 * self.z)
+	local dotkv = _dotproduct(k, self) * versa
+	local crosskv = k ^ self
+
+	return Vec3((self * cosa) + (crosskv * sina) + (k * dotkv))
 end
 
 local _t = {}
@@ -407,14 +405,7 @@ function _t.dot(U, V)
 	assert((U:isa(Vec2) and V:isa(Vec2)) or
 		   (U:isa(Vec3) and V:isa(Vec3)),
 		   "vectors are not of the same order")
-	local sum = 0
-
-	for _, n in ipairs({'x', 'y', 'z'}) do
-		if U[n] and V[n] then
-			sum = sum + (U[n] * V[n])
-		end
-	end
-	return sum
+	return _dotproduct(U, V)
 end
 
 --- Angle between 2D vectors A and B in radians
