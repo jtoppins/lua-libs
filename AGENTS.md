@@ -28,35 +28,16 @@ runtime.
 - New DCS globals go in `.luacheckrc` `read_globals`.
 - `.build/` is untracked local directory for scratch output; don't commit it.
 
-## Conventions
+## Agent context files
 
-- luacheck: Lua 5.1 std, 80-char lines, cyclomatic complexity max 10
-  (relaxed for `api/*` and `json.lua`).
-- Indentation is hard tabs throughout all Lua sources.
-- Every file starts with `-- SPDX-License-Identifier: LGPL-3.0`.
-- Public API documented with `---` LDoc comments (feeds the docs site):
-  - the module summary (`--- Name - description.`) must be the file's
-    first doc block and must appear before any code statement;
-  - adjacent `---` blocks merge into one doc entry — separate doc
-    blocks with actual code lines;
-  - single-function modules: keep the module summary block and the
-    `@function` item block separate (code lines between them);
-    combining both roles in one block makes LDoc fail with
-    `'class' cannot have multiple values; {function,module}` and an
-    empty dump;
-  - full doc blocks (summary + description) render on the docs site
-    for modules and items alike, so write meaningful lead sentences;
-  - document public constant tables with one prose doc block each;
-    avoid `@field` tags on string-keyed tables (LDoc emits warnings);
-  - doc text passes through gendocs as raw markdown (bullet lists OK);
-    avoid `%` characters, gendocs template-interpolates `%..%`;
-  - escape dunder names as `\_\_init` inside doc comments.
-- Naming: lowercase module = set of functions/classes; Uppercase filename =
-  single class matching the classname; public methods camelCase,
-  verbs-first (`readDocs()`); internal/local fields prefixed `_`,
-  internal functions lower_snake_case.
-- Tests: busted; `api/dcs-world-api.lua` (on the lua path) stubs the DCS
-  environment; name test files `test_NNN_<topic>.lua`.
+This file stays thin; load the context file matching your task before
+starting work:
+
+| Task | Read first |
+|------|------------|
+| Editing Lua sources | `.agents/lua-conventions.md` |
+| Writing or editing LDoc comments | `.agents/doc-conventions.md` |
+| Coordinating parallel doc fan-outs | `.agents/docs-workflow.md` |
 
 ## Workflow
 
@@ -74,20 +55,8 @@ runtime.
 - When resuming a session, first reconcile the list against repo state
   (`git log --oneline`, `git status`) and correct stale statuses before
   starting new work.
-- After editing source files run `make check`, then
-  review `git diff` before reporting the change as done.
-- After editing doc comments run `make docs`; LDoc warnings fail
-  `make check` (the gate treats any ldoc stderr as fatal; do not
-  replace it with `--fatalwarnings`, which ldoc ignores under
-  `--filter` because it exits before that check runs).
-- For multi-file comment-only documentation work, fan out parallel
-  doc-writer subagents over disjoint file sets, then review
-  `git diff` before reporting the change as done; treat an
-  interrupted subagent's output as unverified until checked. Draft
-  all task prompts first and issue every launch in a single message;
-  confirm the launched count matches the batch list before reviewing
-  any results. Reserve make targets for the coordinating session
-  during fan-outs; agents verify with luacheck and solo ldoc dry-runs.
+- After editing source files run `make check`, then review `git diff`
+  before reporting the change as done.
 - Feature branches off `master`; PRs merge into `master`.
 - Tagging `v*` triggers a release build (`make dist` zip attached to the
   GitHub release).

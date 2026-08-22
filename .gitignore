@@ -8,6 +8,7 @@
 !.luacheckrc
 !.github
 !.busted
+!.agents
 
 # ignore generated files
 src/libs.lua
