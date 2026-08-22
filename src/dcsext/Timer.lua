@@ -1,13 +1,14 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
-local class = require("dcsext.class")
-
 --- A count-up Timer.
 -- The timer is not cycle accurate and requires the `update` method to be
 -- called periodically to progress the timer to expiration. Additionally,
 -- you must call `start` method before the timer will actually start
 -- counting even if the `update` method is called.
 -- @classmod dcsext.Timer
+
+local class = require("dcsext.class")
+
 local Timer = class("Timer")
 
 --- Constructor.
@@ -56,6 +57,8 @@ end
 
 --- Update the timer, uses timefunc to determine the elapsed
 -- time between updates, returns the time delta between updates.
+-- @return the time delta in seconds since the previous update,
+--   nil when the timer is not started
 function Timer:update()
 	if self.curtime == nil then
 		return
@@ -68,11 +71,14 @@ function Timer:update()
 end
 
 --- Has the timer reached its timeout limit.
+-- @return true when the timeout limit has been reached
 function Timer:expired()
 	return self.timeout >= self.timeoutlimit
 end
 
 --- How many seconds remain.
+-- @return seconds remaining until the timeout limit, never negative
+-- @return the raw time source value captured by the last update
 function Timer:remain()
 	local remain = self.timeoutlimit - self.timeout
 	if remain < 0 then

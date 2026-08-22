@@ -1,11 +1,13 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- tacan - TACAN channel and frequency helpers.
+-- Provides a couple of TACAN related functions to convert between
+-- TACAN channel/mode pairs and radio frequencies.
+
 local check = require("dcsext.check")
 local enum = require("dcsext.enum")
 local MHZ = 1000 * 1000
 local tacan = {}
-
---- Provide a couple of TACAN related functions.
 
 --- Determine the TACAN frequency for the given channel and mode.
 -- @param chan the TACAN channel
@@ -39,7 +41,8 @@ end
 --    [channel][mode] [callsign]
 --
 -- @param desc the channel description string
--- @return table
+-- @return table with channel, mode, callsign and frequency fields,
+--   nil when the description cannot be parsed
 function tacan.decode(desc)
 	local chan, mode = string.match(desc, "^(%d+)(%a)")
 	local callsign = string.match(desc, "^%d+%a%s+(%w.+)$")
