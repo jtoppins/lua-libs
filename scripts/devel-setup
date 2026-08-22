@@ -3,6 +3,8 @@
 set -e
 set -u
 
-sudo apt install -y make bash-completion \
-	lua5.1 lua-filesystem lua-check lua-busted \
-	lua-ldoc lua-zip
+PKGS_COMPILER="build-essential ninja-build cmake cmake-format"
+PKGS_WINDOWS="mingw-w64 mingw-w64-tools"
+PKGS_LUA="lua5.1 lua-filesystem lua-check lua-busted lua-ldoc lua-zip"
+
+sudo apt install ${PKGS_COMPILER} ${PKGS_WINDOWS} ${PKGS_LUA}

@@ -8,6 +8,8 @@
 !.luacheckrc
 !.github
 !.busted
+build
+CMakeUserPresets.json
 
 # ignore generated files
 src/libs.lua

@@ -1,0 +1,85 @@
+{
+	"version": 8,
+	"configurePresets": [
+		{
+			"name": "ninja",
+			"hidden": true,
+			"generator": "Ninja"
+		}, {
+			"name": "native",
+			"inherits": "ninja",
+			"displayName": "Native",
+			"description": "Config for the native host",
+			"binaryDir": "${sourceDir}/build/native",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		}, {
+			"name": "win32",
+			"inherits": "native",
+			"displayName": "Windows",
+			"description": "Cross compile for Windows using mingw",
+			"binaryDir": "${sourceDir}/build/win32",
+			"toolchainFile": "${sourceDir}/toolchains/mingw-toolchain.cmake",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "testing",
+			"configurePreset": "native",
+			"configuration": "Debug",
+			"jobs": 4
+		}, {
+			"name": "release",
+			"inherits": "testing",
+			"configuration": "Release",
+			"configurePreset": "win32"
+		}
+	],
+	"testPresets": [
+		{
+			"name": "testing",
+			"configurePreset": "native"
+		}
+	],
+	"packagePresets": [
+		{
+			"name": "release",
+			"configurePreset": "win32"
+		}
+	],
+	"workflowPresets": [
+		{
+			"name": "release",
+			"steps": [
+				{
+					"type": "configure",
+					"name": "win32"
+				}, {
+					"type": "build",
+					"name": "release"
+				}, {
+					"type": "package",
+					"name": "release"
+				}
+			]
+		}, {
+			"name": "testing",
+			"steps": [
+				{
+					"type": "configure",
+					"name": "native"
+				}, {
+					"type": "build",
+					"name": "testing"
+				}, {
+					"type": "test",
+					"name": "testing"
+				}
+			]
+		}
+	]
+}
