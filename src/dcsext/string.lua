@@ -11,7 +11,7 @@ function _t.firstToUpper(str)
 	return str:gsub("^%l", string.upper)
 end
 
---- String interpolation, substitute %NAME% where NAME is any arbitrary
+--- String interpolation. Substitutes name between two percent signs from tab.
 -- string enclosed with parenthesis with a value in `tab`. `tab` is
 -- a table of name=value pairs.
 -- @param s string with possible substitution keys.
