@@ -7,22 +7,26 @@ local _t = {}
 --- Tests to see if a table has a key that is defined as a
 -- function. Metatables will be used during the test.
 -- @param tbl the table to check
--- @param func the function name string to test for existance of
+-- @param func the function name string to test for existence of
 -- @return boolean, true means the table has an entry that is a
 -- function
 function _t.hasFunc(tbl, func)
 	return type(tbl[func]) == "function"
 end
 
+--- Iterator constructors used to walk a set of objects, see
+-- foreachCall and foreachProtectedCall for their use.
 _t.iterators = {}
 
 --- Iterate a set of objects and return objects that have a given method.
--- @param tbl the table of objects whos keys do not matter and
--- whos values are the objects to be checked if the object implements
+-- @param tbl the table of objects whose keys do not matter and
+-- whose values are the objects to be checked if the object implements
 -- the optional `func` function.
 -- @param iterator callback to iterate over tbl, used in for loop.
 -- @param func the name of the function to check for and execute
 -- if exists.
+-- @return iterator function, state and start index suitable for a
+-- generic for loop
 function _t.iterators.hasFunc(tbl, iterator, func)
 	local itr, state, start = iterator(tbl)
 	local function fnext(s, index)
@@ -64,6 +68,7 @@ end
 -- @param tbl table to search
 -- @param val value to look for
 -- @return True if table contains val, false otherwise
+-- @return the key of the first entry holding val or nil
 function _t.contains(tbl, val)
 	if not tbl then
 		return false
@@ -97,8 +102,8 @@ function _t.deepCopy(obj)
 end
 
 --- Calls an optional function for a set of objects defined in tbl.
--- @param tbl the table of objects whos keys do not matter and
--- whos values are the objects to be checked if the object implements
+-- @param tbl the table of objects whose keys do not matter and
+-- whose values are the objects to be checked if the object implements
 -- the optional `func` function.
 -- @param iterator callback to iterate over tbl, used in for loop.
 -- @param func the name of the function to check for and execute
@@ -114,9 +119,9 @@ end
 
 --- Call an optional function for a set of objects defined in tbl
 -- in a protected context.
--- @param tbl the table of objects whos keys do not matter and whos
---    values are the objects to be checked if the object implements
---    the optional `func` function.
+-- @param tbl the table of objects whose keys do not matter and whose
+-- values are the objects to be checked if the object implements
+-- the optional `func` function.
 -- @param iterator callback to iterate over tbl, used in for loop.
 -- @param func the name of the function to check for and execute if
 --    exists.
@@ -138,7 +143,7 @@ function _t.foreachProtectedCall(tbl, iterator, func, logger, ...)
 	end
 end
 
---- Find the table key assiciated with val. If val not found
+--- Find the table key associated with val. If val not found
 -- return nil.
 -- @param tbl the table to search
 -- @param val the value to find

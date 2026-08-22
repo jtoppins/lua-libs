@@ -10,7 +10,7 @@ local curveTypes = {
 	["LOGISTIC"]  = 3,
 }
 
---- Linear response curve described by the values set the in Axis
+--- Linear response curve described by the values set in the Axis
 -- class.
 -- @param self reference to an Axis instance
 -- @param x a number
@@ -21,7 +21,7 @@ local function linear(self, x)
 	return dcsext.math.clamp(y, 0, 1)
 end
 
---- Logistic response curve described by the values set the in Axis
+--- Logistic response curve described by the values set in the Axis
 -- class.
 -- @param self reference to an Axis instance
 -- @param x a number
@@ -39,9 +39,9 @@ local Axis = class("Axis")
 
 --- Constructor.
 -- @param input a function reference where the signature is of the
---    form: value input(object), thus input known how to obtain
+--    form: value input(object), thus input knows how to obtain
 --    some value from object.
--- @param curve on of enum dcsext.utility.curveTypes
+-- @param curve one of enum dcsext.utility.curveTypes
 -- @param m response curve coefficent
 -- @param k response curve coefficent
 -- @param b response curve coefficent
@@ -74,7 +74,7 @@ end
 local IAUS = class("IAUS")
 
 --- Constructor.
--- @param ... varadioc param list of the Axis classes
+-- @param ... variadic param list of the Axis classes
 function IAUS:__init(...)
 	self.axes = {}
 	for _, a in ipairs({select(1, ...)}) do
@@ -103,6 +103,7 @@ end
 
 -- export public functions
 local _t = {}
+--- Response curve types accepted by the Axis constructor.
 _t.curveTypes = curveTypes
 _t.Axis = Axis
 _t.IAUS = IAUS
