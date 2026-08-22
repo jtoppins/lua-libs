@@ -38,7 +38,8 @@ function SpatialHashGrid:__init(tablesize, cellsize)
 end
 
 --- Maps a 2d position(x, y) into our cell grid.
--- @param position a table with members 'x' and 'y'.
+-- @param x x coordinate of the position to hash.
+-- @param y y coordinate of the position to hash.
 function SpatialHashGrid:_hash(x, y)
 	local xi = x * P1
 	local yi = y * P2

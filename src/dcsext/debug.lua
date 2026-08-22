@@ -1,7 +1,7 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
---- Extensions to lua debug module.
--- Provides functions for dumping _G and other debug functions.
+--- Debug - extensions to lua's debug module.
+-- Provides functions for dumping globals and other debug helpers.
 
 local myio    = require("io")
 local mylfs   = require("lfs")
@@ -11,9 +11,9 @@ local Logger  = require("dcsext.env.Logger")
 
 local _t = {}
 
---- Dump table `tbl` to a file `filename` using the JSON format.
--- This correctly handles self referencing tables and will not generate
--- tracebacks.
+--- Dump a table to a file as pretty printed JSON.
+-- The file is created in `<SAVEDGAMES>/DCS/Logs/`. Self referencing
+-- tables are handled correctly and will not generate tracebacks.
 -- @param filename file name to be created in `<SAVEDGAMES>/DCS/Logs/`
 -- @param tbl the table to dump, encoded in JSON
 function _t.dumpTable(filename, tbl)

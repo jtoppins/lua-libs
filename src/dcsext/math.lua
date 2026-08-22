@@ -4,7 +4,7 @@
 
 local _t = {}
 
---- Add a random value between +/- sigma to val.
+--- Add a random integer between +/- sigma to val.
 -- @param val base value
 -- @param sigma random value between +/- sigma
 -- @return val + random(-sigma,sigma)
@@ -26,8 +26,9 @@ end
 --- Convert a bitset to a numerical value. Since Lua 5.1 doesn't
 -- support bit manipulation this is our poor man's attempt to
 -- represent a binary number or bitfield/flagset.
--- @param bitset is a table where the keys are integers and any
---   non-false value will result in the bit being counted.
+-- @param bitset is a table where the keys are zero indexed bit
+--   positions and any non-false value will result in the bit being
+--   counted.
 -- @return numerical representation of the bitset
 function _t.bitset2num(bitset)
 	local num = 0
@@ -82,7 +83,9 @@ function _t.lerp(a, b, t)
 end
 
 --- Test if a bit is set.
--- @param bit the bit we are looking for
+-- Bits are zero indexed starting at the least significant bit, ex
+-- isBitSet(0, 2) tests the ones place of the value.
+-- @param bit the zero indexed bit we are looking for
 -- @param value the value we want to test
 -- @return true when bit is set, false otherwise
 function _t.isBitSet(bit, value)
@@ -90,6 +93,7 @@ function _t.isBitSet(bit, value)
 end
 
 --- Is a point inside a circle?
+-- Points exactly on the radius are considered outside the circle.
 -- @param center The center of the circle, as a Vec2
 -- @param radius The radius of the circle
 -- @param point The point to test inside circle as a Vec2
@@ -98,7 +102,10 @@ function _t.isPointInCircle(center, radius, point)
 	return dcsext.vector.distance(center, point) < radius
 end
 
---- Returns a random Vec2 in circle of a given center and radius
+--- Returns a random Vec2 uniformly distributed in circle of a given
+-- center and radius.
+-- Sampling is area weighted so points spread evenly over the disc;
+-- minRadius carves out an inner exclusion ring around the center.
 -- @param center Center of the circle as a Vec2
 -- @param maxRadius Radius of the circle
 -- @param minRadius (optional) Minimum inner radius circle in which points
@@ -124,8 +131,10 @@ function _t.round(num)
 end
 
 --- Converts a value to a boolean
+-- nil, false, 0 and the strings "false", "no" and "off" (case
+-- insensitive) become false, everything else true.
 -- @param val Value to convert
--- @return A boolean, nil is considered false
+-- @return A boolean interpretation of val
 function _t.toBoolean(val)
 	if val == nil or not val or val == 0 then
 		return false

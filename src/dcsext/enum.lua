@@ -1,12 +1,13 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
--- =============================================
--- Enum - definitions that are not exposed via the mission
--- environment, but are necessary.
--- =============================================
+--- Enum - DCS enumerations and constants not exposed via the mission
+-- scripting environment, but necessary for library functions.
 
 local _t = {}
 
+--- Coalition sides extended with library specific entries.
+-- Extends the DCS `coalition.side` enum with ALL (-1), ex used for the
+-- scope of ui draw objects, and CONTESTED (3).
 _t.coalition = {
 	["ALL"]       = -1,
 	["NEUTRAL"]   = coalition.side.NEUTRAL,
@@ -15,6 +16,7 @@ _t.coalition = {
 	["CONTESTED"] = 3,
 }
 
+-- TACAN constants used by dcsext.tacan
 local tacan = {}
 tacan.CHANNEL = {
 	["MIN"] = 1,
@@ -27,9 +29,17 @@ tacan.GND = {
 	["BASE_INV"] = 64,
 }
 
+--- TACAN related constants.
+-- CHANNEL defines the valid TACAN channel number range (MIN/MAX), GND
+-- holds the base channel numbers for X and Y mode ground stations
+-- (BASE_X, BASE_Y) and the inversion offset (BASE_INV) needed to
+-- encode/decode ground station channels.
 _t.TACAN = tacan
 
+--- Constants for DCS markup drawings used by the ui draw objects.
 _t.MARKUP = {}
+
+--- Line styles for markup drawings.
 _t.MARKUP.LINETYPE = {
 	["NOLINE"]   = 0,
 	["SOLID"]    = 1,
@@ -39,6 +49,8 @@ _t.MARKUP.LINETYPE = {
 	["LONGDASH"] = 5,
 	["TWODASH"]  = 6,
 }
+
+--- Shape identifiers for markup drawings.
 _t.MARKUP.SHAPE = {
 	["LINE"]     = 1,
 	["CIRCLE"]   = 2,
@@ -49,6 +61,8 @@ _t.MARKUP.SHAPE = {
 	["FREEFORM"] = 7,
 }
 
+--- Carrier controlled deck illumination modes.
+-- OFF, AUTO or a specific flight operation: NAV, LAUNCH and RECOVERY.
 _t.CARRIER_ILLUM_MODE = {
 	["OFF"]      = -2,
 	["AUTO"]     = -1,
@@ -57,18 +71,25 @@ _t.CARRIER_ILLUM_MODE = {
 	["RECOVERY"] = 2,
 }
 
+--- Task entry types within a waypoint task table.
+-- COMMAND wraps an EnRouteCommand, OPTION sets a controller option and
+-- TASK assigns the main mission task.
 _t.TASKTYPE = {
 	["COMMAND"] = 1,
 	["OPTION"]  = 2,
 	["TASK"]    = 3,
 }
 
+--- Attack run types for bombing tasks.
 _t.ATTACKTYPE = {
 	["CARPET"] = "Carpet",
 	["DIVE"]   = "Dive",
 }
 
+--- Radio beacon constants used with the DCS beacon commands.
 _t.BEACON = {}
+
+--- Beacon type identifiers, ex VOR, TACAN, ILS and ICLS stations.
 _t.BEACON.TYPE = {
 	["NULL"]                      = 0,
 	["VOR"]                       = 1,
@@ -92,6 +113,7 @@ _t.BEACON.TYPE = {
 	["NAUTICAL_HOMER"]            = 65536,
 }
 
+--- Navigation system identifiers for beacons.
 _t.BEACON.SYSTEM = {
 	["PAR_10"]              = 1,
 	["RSBN_4H"]             = 2,
@@ -114,11 +136,15 @@ _t.BEACON.SYSTEM = {
 	["TACAN_MOBILE_MODE_Y"] = 19,
 }
 
+--- TACAN channel modes.
 _t.BEACON.TACANMODE = {
 	["X"] = "X",
 	["Y"] = "Y",
 }
 
+--- DCS command names used to switch off beacon services.
+-- ALL deactivates the beacon itself, the remaining entries deactivate
+-- the ACLS, ICLS and Link4 services.
 _t.BEACON.DEACTIVATE = {
 	["ALL"]   = "DeactivateBeacon",
 	["ACLS"]  = "DeactivateACLS",
@@ -126,7 +152,10 @@ _t.BEACON.DEACTIVATE = {
 	["LINK4"] = "DeactivateLink4",
 }
 
+--- Formation definitions for grouped aircraft.
 _t.FORMATION = {}
+
+--- Formation geometry identifiers, MAX bounds the valid range.
 _t.FORMATION.TYPE = {
 	["NO_FORMATION"]              = 0,
 	["LINE_ABREAST"]              = 1,
@@ -150,23 +179,29 @@ _t.FORMATION.TYPE = {
 	["MAX"]                       = 19,
 }
 
+--- Formation spacing presets.
 _t.FORMATION.DISTANCE = {
 	["CLOSE"] = 1,
 	["OPEN"]  = 2,
 	["GROUP"] = 3,
 }
 
+--- Side offsets for echelon style formations.
 _t.FORMATION.SIDE = {
 	["RIGHT"] = 0,
 	["LEFT"]  = 256,
 }
 
+--- Orbit patterns for racetrack/circle style station keeping.
 _t.ORBITPATTERN = {
 	["RACE_TRACK"] = "Race-Track",
 	["CIRCLE"]     = "Circle",
 	["ANCHORED"]   = "Anchored",
 }
 
+--- Weapon category identifiers.
+-- Classifies the weapons carried by a unit, e.g. bombs, rockets,
+-- missiles, AAMs, guns, torpedoes and specialty shells.
 _t.WEAPONFLAGS = {
 	["NOWEAPON"]      = 0,
 
