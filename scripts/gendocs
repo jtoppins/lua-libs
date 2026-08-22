@@ -172,7 +172,8 @@ local function writeSection(hfile, title, item, lvl)
 
 	hfile:write(interp(fmtstr, {
 		["HEADER"]      = header(title, lvl),
-		["DESCRIPTION"] = item.description.."\n" or "",
+		["DESCRIPTION"] = tostring(item.summary or "")..
+			(item.description or "").."\n",
 		["BODY"]        = body,
 	}))
 end

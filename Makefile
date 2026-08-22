@@ -116,7 +116,7 @@ $(MODNAME)-$(PROJ_VERSION).zip: install
 	$(call cmd,distzip)
 
 PHONY += check syntax tests
-check: syntax tests
+check: syntax tests generated-docs
 
 syntax: generated
 	$(Q)$(LUACHECK) $(LUACHECK_OPTS) src tests scripts/gendocs
@@ -193,8 +193,12 @@ $(generated_sources): %.lua: %.lua.in
 quiet_cmd_gendocs = LDOC    $@
       cmd_gendocs = \
 		mkdir -p $@; \
-		$(LUADOC) $(LUADOC_OPTS) --filter pl.pretty.dump src | \
-		scripts/gendocs --output $@ -;
+		$(LUADOC) $(LUADOC_OPTS) --filter pl.pretty.dump \
+			src >$@/.refdump 2>$@/.refwarn; \
+		test ! -s $@/.refwarn || \
+			{ cat $@/.refwarn >&2; rm -rf $@; exit 1; }; \
+		scripts/gendocs --output $@ - <$@/.refdump; \
+		rm -f $@/.refdump $@/.refwarn
 
 $(generated_docs): $(source_files) scripts/gendocs
 	$(call cmd,gendocs)
