@@ -1,10 +1,12 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Waypoint - a single stop along a dcsext.ai.Route followed by a
+-- DCS unit group. Helps in constructing a DCS mission task, see
+-- "DCS task mission" on the Hoggit Wiki.
+-- @classmod dcsext.ai.Waypoint
+
 local class  = require("dcsext.class")
 
---- Define a waypoint in a DCS route. Helps in constructing a
--- DCS mission task, see "DCS task mission" on Hoggit Wiki.
--- @classmod dcsext.ai.Waypoint
 local Waypoint = class("Waypoint")
 
 --- Constructor.
@@ -31,7 +33,8 @@ function Waypoint:__init(point, wtype, action, speed, name)
 	self.createLandingTakeoff = nil
 end
 
---- Waypoint types. Use TURNING_POINT for ships and ground groups.
+--- Waypoint types. Maps symbolic names onto AI.Task.WaypointType
+-- values. Use TURNING_POINT for ships and ground groups.
 Waypoint.wpType = {
 	["TURNING_POINT"]       = AI.Task.WaypointType.TURNING_POINT,
 	["TAKEOFF"]             = AI.Task.WaypointType.TAKEOFF,
@@ -43,7 +46,9 @@ Waypoint.wpType = {
 	["LAND_REARM"]          = "LandingReFuAr",
 }
 
---- Waypoint actions. Use TURNING_POINT for ships and ground groups.
+--- Waypoint actions. Maps symbolic names onto AI.Task.WaypointType
+-- and AI.Task.TurnMethod values. Use TURNING_POINT for ships and
+-- ground groups.
 Waypoint.wpAction = {
 	["TURNING_POINT"]    = AI.Task.WaypointType.TURNING_POINT,
 	["FLY_OVER_POINT"]   = AI.Task.TurnMethod.FLY_OVER_POINT,
@@ -85,10 +90,14 @@ local linkmap = {
 }
 
 --- Class method to create a ground group compatible waypoint.
+-- The waypoint altitude is taken from the terrain height at the
+-- given point.
 -- @param point a Vec2
 -- @param speed number in meters per second
--- @param formation (optional) one of AI.Task.VehicleFormation
+-- @param formation (optional) one of AI.Task.VehicleFormation,
+-- defaults to AI.Task.VehicleFormation.ON_ROAD
 -- @param name (optional) name of waypoint
+-- @return dcsext.ai.Waypoint the new ground group waypoint
 function Waypoint.createGround(point, speed, formation, name)
 	local pt = dcsext.vector.Vec3(point)
 	pt.y = land.getHeight(dcsext.vector.Vec2(point):get())
@@ -105,8 +114,10 @@ end
 --- Class method to create a naval group compatible waypoint.
 -- @param point a Vec2
 -- @param speed number in meters per second
--- @param depth (optional) depth in meters
+-- @param depth depth in meters, the waypoint altitude is set to
+-- its negated absolute value so the waypoint sits below sea level
 -- @param name (optional) name of waypoint
+-- @return dcsext.ai.Waypoint the new naval group waypoint
 function Waypoint.createNaval(point, speed, depth, name)
 	local wpt = Waypoint(point,
 			     Waypoint.wpType.TURNING_POINT,
@@ -116,11 +127,13 @@ function Waypoint.createNaval(point, speed, depth, name)
 	return wpt
 end
 
---- Class method to create a landing or takeoff waypoint
+--- Class method to create a landing or takeoff waypoint linked to
+-- the given airbase.
 -- @param airbase a DCS Airbase instance
 -- @param wtype one of Waypoint.wpType, required to specify the
--- takeoff type or landing
+-- takeoff type or landing; also used as the waypoint name
 -- @param speed (optional) speed in meters per second
+-- @return dcsext.ai.Waypoint the new landing or takeoff waypoint
 function Waypoint.createLandingTakeoff(airbase, wtype, speed)
 	dcsext.check.table(airbase)
 	local point = dcsext.vector.Vec3(airbase:getPoint())
@@ -133,9 +146,10 @@ end
 
 --- Set the waypoint location.
 -- @param vec2 a Vec2 point
--- @param wptype one of Waypoint.wpType
+-- @param wptype one of Waypoint.wpType, defaults to TURNING_POINT
 -- @param action (optional) one of Waypoint.wpAction otherwise an
--- appropriate value will be chosen based on wtype
+-- appropriate value will be chosen based on wtype, falling back
+-- to TURNING_POINT when no mapping exists
 function Waypoint:setPoint(vec2, wptype, action)
 	self.point = dcsext.vector.Vec2(dcsext.check.table(vec2))
 	self.type = dcsext.check.tblkey(wptype or
@@ -154,8 +168,9 @@ function Waypoint:setPoint(vec2, wptype, action)
 end
 
 --- Set the altitude of the waypoint.
--- @param alt altitude to set for the waypoint
--- @param alttype AI.Task.AltitudeType.* the default is BARO
+-- @param alt altitude in meters to set for the waypoint
+-- @param alttype (optional) one of AI.Task.AltitudeType, defaults
+-- to BARO
 function Waypoint:setAlt(alt, alttype)
 	self.alt      = dcsext.check.number(alt)
 	self.alt_type = dcsext.check.tblkey(alttype or
@@ -165,6 +180,7 @@ function Waypoint:setAlt(alt, alttype)
 end
 
 --- Set the speed of the waypoint.
+-- Locks the speed and releases any ETA override set with setETA().
 -- @param spd speed in meters per second
 function Waypoint:setSpeed(spd)
 	self.speed        = dcsext.check.number(spd)
@@ -182,11 +198,13 @@ function Waypoint:setETA(time)
 	self.speed_locked = false
 end
 
---- Add a new task to the task list.
--- @param task task table
--- @param tasktype dcsext.enum.TASKTYPE
--- @param idx (optional) if provided is the integer index to insert
--- the new task at, otherwise appends to the end of the list
+--- Add a new task to the waypoint task list.
+-- @param task task table as generated by createTaskTbl, e.g. by
+-- the dcsext.ai.tasks helpers
+-- @param tasktype one of the values defined in dcsext.enum.TASKTYPE
+-- @param idx (optional) integer position to insert the task at,
+-- later tasks shift down; appends to the end of the list when
+-- omitted
 function Waypoint:addTask(task, tasktype, idx)
 	local tbl = dcsext.ai.exec.wrapTask(task, tasktype)
 
@@ -197,15 +215,19 @@ function Waypoint:addTask(task, tasktype, idx)
 	end
 end
 
---- Remove a waypoint from the task list.
--- @param idx (optional) remove Waypoint at idx position, otherwise
--- remove the Waypoint at the end of the list
+--- Remove a task from the waypoint task list.
+-- @param idx (optional) integer position of the task to remove,
+-- removes the last task when omitted
+-- @return the removed wrapped task table, see
+-- dcsext.ai.exec.wrapTask, or nil when idx is out of range
 function Waypoint:removeTask(idx)
 	return table.remove(self.tasks, idx)
 end
 
---- Get a raw DCS compatible representation of the waypoint.
--- @return table
+--- Get a raw DCS compatible representation of the waypoint,
+-- suitable for use as a route point in a DCS mission task.
+-- @return t table holding the waypoint attributes merged with the
+-- point coordinates and any wrapped tasks
 function Waypoint:get()
 	local attrs = {
 		"name", "type", "action", "alt", "alt_type",
