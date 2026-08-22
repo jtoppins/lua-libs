@@ -54,18 +54,22 @@ function Graph:__init()
 end
 
 --- Does `x` exist in the graph
+-- @param x node to look up, any value usable as a lua table key
 -- @return boolean
 function Graph:exists(x)
 	return self.nodes[x] ~= nil
 end
 
 --- Return the list of adjacent nodes for `x`.
+-- @param x node whose adjacency list is returned
 -- @return list
 function Graph:neighbors(x)
 	return self.nodes[x]
 end
 
 --- Are `x` and `y` adjacent to each other?
+-- @param x node tested for adjacency
+-- @param y node tested for adjacency
 -- @return boolean
 function Graph:adjacent(x, y)
 	local x_adj = self:neighbors(x)
