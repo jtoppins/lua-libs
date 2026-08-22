@@ -1,12 +1,16 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Zone. Represents a zone table as defined in a mission file and
+-- provides access to its geometry and custom properties.
+-- @classmod dcsext.env.Zone
+
 local class = require("dcsext.class")
 
---- Zone class. Class that represents a zone table as defined
--- in a mission table.
--- @classmod dcsext.env.Zone
 local Zone = class("Zone")
 
+--- Zone geometry types.
+-- Maps the zone type strings found in mission file zone definitions
+-- to their numeric ids.
 Zone.types = {
 	["CIRCLE"] = 1,
 	["QUAD"]   = 2,
@@ -15,8 +19,9 @@ Zone.types = {
 --- Return a list of Zone objects
 -- @param zonelist the list of zone definitions, from the DCS env.mission
 --    table this would be `env.mission.triggers.zones`
--- @param logger reference
--- @return a list of Zone objects
+-- @param logger optional Logger instance used to report duplicate
+--    zone names
+-- @return a table of Zone objects keyed by zone name
 function Zone.getZones(zonelist, logger)
 	local zones = {}
 	for _, z in pairs(zonelist) do
@@ -32,7 +37,8 @@ function Zone.getZones(zonelist, logger)
 end
 
 --- Zone constructor.
--- @param zonetbl
+-- @param zonetbl zone definition table from the mission file, one
+--    entry of `env.mission.triggers.zones`
 function Zone:__init(zonetbl)
 	self.id      = zonetbl.zoneId
 	self.name    = zonetbl.name:lower()
@@ -67,12 +73,15 @@ function Zone:__init(zonetbl)
 	end
 end
 
+--- Return the name of the zone.
+-- @return the zone name in lower case
 function Zone:getName()
 	return self.name
 end
 
 --- Return the center of the zone.
--- @return dcsext.vector.Vec2
+-- For quad zones the center is the average of the zone vertices.
+-- @return the zone center point as a dcsext.vector.Vec2
 function Zone:getPoint()
 	local point = self.point or dcsext.vector.Vec2()
 
@@ -86,6 +95,7 @@ function Zone:getPoint()
 end
 
 --- Return the value of zone property by name.
+-- Property names are matched in lower case.
 -- @param name the property name to look up
 -- @return value or nil if the property doesn't exist
 function Zone:getProperty(name)
@@ -93,8 +103,10 @@ function Zone:getProperty(name)
 end
 
 --- Return the property value converted to a bool.
+-- Conversion follows dcsext.math.toBoolean, nil, false, 0 and the
+-- strings "false", "no" and "off" become false, everything else true.
 -- @param name the property name to look up
--- @return boolean
+-- @return boolean interpretation of the property value
 function Zone:getPropertyBoolean(name)
 	return dcsext.math.toBoolean(self:getProperty(name))
 end
@@ -103,7 +115,8 @@ end
 -- @param name the property name to look up
 -- @param min minimum numerical value
 -- @param max maximum numerical value
--- @return number clamped between min and max
+-- @return the property value clamped between min and max, or nil if
+--    the property is missing or not numeric
 function Zone:getPropertyFloat(name, min, max)
 	local val = tonumber(self:getProperty(name))
 
@@ -117,7 +130,8 @@ end
 -- @param name the property name to look up
 -- @param min minimum numerical value
 -- @param max maximum numerical value
--- @return number clamped between min and max
+-- @return the property value rounded down and clamped between min
+--    and max, or nil if the property is missing or not numeric
 function Zone:getPropertyInt(name, min, max)
 	local val = self:getPropertyFloat(name, min, max)
 

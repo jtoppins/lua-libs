@@ -1,5 +1,10 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Logger. A simple leveled logger that writes to the DCS mission
+-- environment log functions. Loggers are created by name and shared
+-- through `getByName`.
+-- @classmod dcsext.env.Logger
+
 local class = require("dcsext.class")
 
 local _loggers = {}
@@ -11,12 +16,11 @@ local _settings = {
 	logger      = {},
 }
 
---- Logger. A logger class.
--- @classmod dcsext.env.Logger
 local Logger = class("Logger")
 
---- Logger logging level.
--- Passed to setLevel to set the associated logging level.
+--- Logger logging levels.
+-- Numeric levels passed to setLevel and setDefaultLogLevel, lower
+-- values are more severe.
 Logger.level = {
 	["error"] = 0,
 	["warn"]  = 1,
@@ -25,7 +29,10 @@ Logger.level = {
 }
 
 --- Get the logger associated with name.
+-- Creates the logger on first use so callers sharing a name share a
+-- single instance.
 -- @param name facility name
+-- @return the Logger instance for name
 function Logger.getByName(name)
 	local l = _loggers[name]
 	if l == nil then
@@ -35,6 +42,9 @@ function Logger.getByName(name)
 	return l
 end
 
+--- Enable or disable debug level as the default for new loggers.
+-- Existing loggers keep their current level.
+-- @param debug value converted with dcsext.math.toBoolean
 function Logger.setDebug(debug)
 	debug = dcsext.math.toBoolean(debug)
 	_settings.debug = debug
@@ -48,7 +58,7 @@ function Logger.setDefaultLogLevel(lvl)
 	_settings.level = lvl
 end
 
---- Set specificly named loggers to have a specified default log
+--- Set specifically named loggers to have a specified default log
 -- level. This might be useful when you have a known set of named
 -- loggers and some need to log at debug vs. error.
 -- @param lvltbl a table where each key is the name of a logger
@@ -67,7 +77,8 @@ function Logger.setPrefix(prefix)
 end
 
 --- Constructor.
--- @param name facility name
+-- @param name unique facility name for this logger, shown in every
+--     message it logs
 function Logger:__init(name)
 	self.name   = dcsext.check.string(name)
 	self.fmtstr = _settings.prefix .. "|%s: %s"
@@ -93,7 +104,7 @@ function Logger:__init(name)
 end
 
 --- Sets the logging level of the logger object.
--- @param lvl log level to set
+-- @param lvl numeric log level from Logger.level
 function Logger:setLevel(lvl)
 	assert(type(lvl) == "number", "invalid log level, not a number")
 	assert(lvl >= Logger.level["error"] and lvl <= Logger.level["debug"],
@@ -122,7 +133,7 @@ function Logger:error(userfmt, ...)
 	self:_log(env.error, self.fmtstr, userfmt, self.showErrors, ...)
 end
 
---- Log an warning message.
+--- Log a warning message.
 -- @param userfmt format string same as string.format
 -- @param ... values to format
 function Logger:warn(userfmt, ...)
