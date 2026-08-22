@@ -45,6 +45,10 @@ function WeaponImpactTracker:__init(updateRate, eventID, weaponLifetime)
 	})
 end
 
+--- Register the tracker as an event handler and schedule its
+-- periodic updates with the DCS scheduler.
+-- @param startdelay unused by the base class registration, which
+--   schedules the first run after `self.delay` seconds.
 function WeaponImpactTracker:register(startdelay)
 	EventHandler.register(self)
 	Command.register(self, startdelay)

@@ -352,7 +352,12 @@ function Vec3:rotY(theta)
 end
 
 --- Rotate Vec3 about an arbitrary axis using Rodrigues' rotation
--- formula
+-- formula. Positive values of theta rotate according to the
+-- right-hand rule about the axis.
+-- @param axis non-zero axis of rotation, any table convertible by
+--     the Vec3 constructor; the axis is normalized internally
+-- @param theta angle of rotation in radians
+-- @return the rotated vector
 function Vec3:rotAxis(axis, theta)
 	local k = unitvec(Vec3(axis))
 	local cosa = math.cos(theta)
@@ -368,7 +373,7 @@ local _t = {}
 _t.Vec2 = Vec2
 _t.Vec3 = Vec3
 
---- Get the bearing or azmith between two points.
+--- Get the bearing or azimuth between two points.
 -- @param vec1
 -- @param vec2 optional will be assumed to be zero,zero
 -- @return bearing in radians
@@ -392,7 +397,10 @@ function _t.distance(vec1, vec2)
 	return v:magnitude()
 end
 
---- @within vector
+--- Calculate the unit vector of `vec`.
+-- @param vec vector to calculate the unit vector of.
+-- @return unit vector of vec or nil if the magnitude is zero
+-- @within vector
 _t.unitvec = unitvec
 
 --- Dot product of vectors U and V. The vectors must be of the same
