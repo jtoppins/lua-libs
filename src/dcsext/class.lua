@@ -88,7 +88,7 @@ local function class(name, base, ...)
 			self._props[propName].set = set
 		end
 
-		if setAfter ~= nil and type(set) == "function" then
+		if setAfter ~= nil and type(setAfter) == "function" then
 			self._props[propName].setAfter = setAfter
 		end
 	end
