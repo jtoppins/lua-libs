@@ -1,14 +1,16 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Mark - draw a mark object on the DCS F10 map.
+-- @classmod dcsext.ui.Mark
+-- @see dcsext.ui.DrawObject
+
 local class = require("dcsext.class")
 local DrawObject = require("dcsext.ui.DrawObject")
 
---- Draws a mark object on the DCS F10 map.
--- @classmod dcsext.ui.Mark
--- @see dcsext.ui.DrawObject
 local Mark = class("Mark", DrawObject)
 
 --- The scope in which the mark can be viewed.
+-- Provides the COALITION, GROUP, and ALL scope keys.
 Mark.scopeType = {
 	["COALITION"] = "coa",
 	["GROUP"]     = "group",

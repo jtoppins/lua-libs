@@ -1,18 +1,21 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Triangle - draw a triangle on the F10 map.
+-- @classmod dcsext.ui.Triangle
+-- @see dcsext.ui.DrawObject
+
 local class = require("dcsext.class")
 local DrawObject = require("dcsext.ui.DrawObject")
 local enum  = require("dcsext.enum")
 
---- Draw a triangle on the F10 map.
--- @classmod dcsext.ui.Triangle
--- @see dcsext.ui.DrawObject
 local Triangle = class("Triangle", DrawObject)
 
 --- Constructor.
+-- Raises an error when fewer than three points are supplied.
 -- @param points list of points representing the three corners of the
 --        triangle.
--- @param scope ex.enum.coalition, which coalition can see the line
+-- @param scope dcsext.enum.coalition, which coalition can see the
+--        triangle
 function Triangle:__init(points, scope)
 	assert(type(points) == "table" and #points >= 3,
 		"invalid points, need 3")

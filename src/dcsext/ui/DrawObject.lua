@@ -1,5 +1,10 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- DrawObject - base class for a drawable object.
+-- This class must be inherited by a concrete class that needs to
+-- draw objects in DCS.
+-- @classmod dcsext.ui.DrawObject
+
 local class = require("dcsext.class")
 local Color = require("dcsext.ui.Color")
 local setters = require("dcsext.setters")
@@ -14,13 +19,24 @@ local function setLineType(self, key, new, old)
 				       key, new, old)
 end
 
---- Base class for a drawable object.
--- This class must be inherited by a concrete class that needs to
--- draw objects in DCS.
--- @classmod dcsext.ui.DrawObject
 local DrawObject = class("DrawObject")
 
 --- Constructor.
+-- Initializes the drawable with the properties listed below. Every
+-- property can be reassigned later; while the object is drawn the
+-- change is pushed to DCS immediately.
+--
+-- * color - outline color, a Color instance (default black)
+-- * colorfill - fill color, a Color instance (default black)
+-- * linetype - line style from enum.MARKUP.LINETYPE (default SOLID)
+-- * text - label text (default empty string)
+-- * fontsize - font size in points (default 12)
+-- * radius - radius in meters, used by circles (default 100)
+-- * readonly - whether the mark can be edited by players
+--   (default true)
+--
+-- @param scope dcsext.enum.coalition, which coalition can see the
+--        drawn object; defaults to all coalitions.
 function DrawObject:__init(scope)
 	self._drawn = false
 	self.scope = scope or dcsext.enum.coalition.ALL
@@ -52,11 +68,14 @@ function DrawObject:__draw()
 end
 
 --- Tests if this object has been drawn to the screen.
+-- @return true if the object is currently drawn, false otherwise.
 function DrawObject:isDrawn()
 	return self._drawn
 end
 
 --- Public method to draw the object.
+-- Allocates a mark id and calls the abstract \_\_draw method once;
+-- further calls are ignored until the object is removed again.
 function DrawObject:draw()
 	if self:isDrawn() then
 		return
@@ -68,6 +87,7 @@ function DrawObject:draw()
 end
 
 --- Remove the drawn object from DCS.
+-- Does nothing when the object is not currently drawn.
 function DrawObject:remove()
 	if not self:isDrawn() or self.id == nil then
 		return
@@ -80,6 +100,11 @@ end
 
 --- Updates an attribute of the object when its associated class
 -- property is updated.
+-- Live-updates the corresponding attribute of the drawn mark in DCS;
+-- has no effect while the object is not drawn.
+-- @param key name of the updated property.
+-- @param new the new property value.
+-- @param old the previous property value.
 function DrawObject:update(key, new, old)
 	local updater = self._updateHandlers[key]
 

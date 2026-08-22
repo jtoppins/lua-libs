@@ -1,5 +1,10 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Color - represents a DCS color table.
+-- Channels are decimal numbers clamped to the range 0 to 1 and
+-- strict equality between colors is supported.
+-- @classmod dcsext.ui.Color
+
 local class  = require("dcsext.class")
 local mymath = require("dcsext.math")
 local overrideOps = require("dcsext.overrideOps")
@@ -19,12 +24,13 @@ function colormt.__eq(self, other)
 		self.blue == other.blue and self.alpha == other.alpha
 end
 
---- Color class, represents a DCS color table.
--- @classmod dcsext.ui.Color
 local Color = overrideOps(class("Color"), colormt)
 
 --- Copy constructor.
--- @param obj the object to copy color information from.
+-- Missing channels default to 0.
+-- @param obj optional object to copy color information from; either
+--        a color object or a lua array holding red, green, blue, and
+--        alpha values.
 function Color:__init(obj)
 	self:_property("red",   0, setColor)
 	self:_property("green", 0, setColor)
@@ -59,6 +65,8 @@ end
 --- Get the color formatted in DCS color RGBA format.
 -- @param alpha optionally set the alpha channel to `alpha` otherwise
 --    the alpha channel will be whatever was originally set.
+-- @return lua array with the red, green, blue, and alpha channel
+--    values.
 function Color:get(alpha)
 	if alpha ~= nil then
 		alpha = mymath.clamp(tonumber(alpha), 0, 1)
@@ -67,9 +75,10 @@ function Color:get(alpha)
 	return {self.red, self.green, self.blue, alpha or self.alpha}
 end
 
---- List of common colors
 -- The list has to be the last thing in the file otherwise not all
 -- methods will be applied.
+
+--- List of common colors.
 Color.colors = {
 	["BLACK"]  = Color({0,0,0,1}),
 	["GRAY"]   = Color({128/255, 128/255, 128/255, 1}),
