@@ -121,12 +121,16 @@ end
 --- Constructor. Create Vec2 object from `x` and `y` coordinates.
 -- The constructor never fails and if no coordinate elements are detected
 -- all values will be zero.
+-- @param x coordinate x (nil defaults to 0)
+-- @param y coordinate y (nil defaults to 0)
 function Vec2.new(x, y)
 	local t = { ["x"] = x, ["y"] = y, }
 	return Vec2(t)
 end
 
 --- Reset the current Vec2 to the specified x & y values.
+-- @param x new x coordinate (nil defaults to 0)
+-- @param y new y coordinate (nil defaults to 0)
 function Vec2:set(x, y)
 	self.x = x or 0
 	self.y = y or 0
@@ -147,6 +151,8 @@ end
 Vec2.length = Vec2.magnitude
 
 --- Translate a Vec2.
+-- @param dx offset along x (optional)
+-- @param dy offset along y (optional)
 function Vec2:translate(dx, dy)
 	local v = {}
 	v.x = self.x + (dx or 0)
@@ -156,6 +162,7 @@ end
 
 --- Rotate the 2D vector. Using standard right-hand rule rotation,
 -- counter-clockwise for positive values of theta.
+-- @param theta rotation angle in radians (counter-clockwise positive)
 function Vec2:rotate(theta)
 	local sint = math.sin(theta)
 	local cost = math.cos(theta)
@@ -280,12 +287,18 @@ end
 --- Constructor. Create Vec3 object from `x`, `y`, and `z` values.
 -- The constructor never fails and if no coordinate elements are detected
 -- all values will be zero.
+-- @param x coordinate x (nil defaults to 0)
+-- @param y coordinate y (nil defaults to 0)
+-- @param z coordinate z (nil defaults to 0)
 function Vec3.new(x, y, z)
 	local t = { ["x"] = x or 0, ["y"] = y or 0, ["z"] = z or 0, }
 	return Vec3(t)
 end
 
 --- Reset the current Vec3 to the specified x, y, & z values.
+-- @param x new x coordinate (nil defaults to 0)
+-- @param y new y coordinate (nil defaults to 0)
+-- @param z new z coordinate (nil defaults to 0)
 function Vec3:set(x, y, z)
 	self.x = x or 0
 	self.y = y or 0
@@ -307,6 +320,9 @@ end
 Vec3.length = Vec3.magnitude
 
 --- Translate a Vec3.
+-- @param dx offset along x (optional)
+-- @param dy offset along y (optional)
+-- @param dz offset along z (optional)
 function Vec3:translate(dx, dy, dz)
 	local v = {}
 	v.x = self.x + (dx or 0)
@@ -316,6 +332,7 @@ function Vec3:translate(dx, dy, dz)
 end
 
 --- Rotate Vec3 about the Z axis.
+-- @param theta angle of rotation in radians (right-hand rule about Z axis)
 function Vec3:rotZ(theta)
 	local sint = math.sin(theta)
 	local cost = math.cos(theta)
@@ -330,6 +347,7 @@ end
 Vec3.rotate = Vec3.rotZ
 
 --- Rotate Vec3 about the X axis.
+-- @param theta angle of rotation in radians (right-hand rule about X axis)
 function Vec3:rotX(theta)
 	local sint = math.sin(theta)
 	local cost = math.cos(theta)
@@ -341,6 +359,7 @@ function Vec3:rotX(theta)
 end
 
 --- Rotate Vec3 about the Y axis.
+-- @param theta angle of rotation in radians (right-hand rule about Y axis)
 function Vec3:rotY(theta)
 	local sint = math.sin(theta)
 	local cost = math.cos(theta)
@@ -374,7 +393,7 @@ _t.Vec2 = Vec2
 _t.Vec3 = Vec3
 
 --- Get the bearing or azimuth between two points.
--- @param vec1
+-- @param vec1 vector/point the bearing is measured from
 -- @param vec2 optional will be assumed to be zero,zero
 -- @return bearing in radians
 -- @within vector
@@ -417,8 +436,8 @@ function _t.dot(U, V)
 end
 
 --- Angle between 2D vectors A and B in radians
--- @param A
--- @param B
+-- @param A first vector
+-- @param B second vector
 -- @return angle in radians
 -- @within vector
 function _t.angle(A, B)
@@ -427,8 +446,8 @@ function _t.angle(A, B)
 end
 
 --- Projection of A onto B.
--- @param A
--- @param B
+-- @param A vector to project
+-- @param B vector to project onto
 -- @return the projected vector of A onto B
 -- @within vector
 function _t.projection(A, B)
