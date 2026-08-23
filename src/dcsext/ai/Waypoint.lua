@@ -112,7 +112,7 @@ function Waypoint.createNaval(point, speed, depth, name)
 			     Waypoint.wpType.TURNING_POINT,
 			     Waypoint.wpAction.TURNING_POINT,
 			     speed, name)
-	wpt:setAlt(-math.abs(depth) or 0)
+	wpt:setAlt(-math.abs(depth or 0))
 	return wpt
 end
 

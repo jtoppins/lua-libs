@@ -118,4 +118,29 @@ describe("validate dcsext.ai", function()
 			},
 		})
 	end)
+	test("Waypoint.createNaval handles nil depth", function()
+		-- nil depth should default to 0 (altitude = 0)
+		local wpt1 = ai.Waypoint.createNaval(
+				vector.Vec2.new(100, 200),
+				10, nil, "TestNil")
+		assert.are.equal(wpt1.alt, 0)
+
+		-- explicit depth should use negated absolute value
+		local wpt2 = ai.Waypoint.createNaval(
+				vector.Vec2.new(100, 200),
+				10, 50, "TestDepth")
+		assert.are.equal(wpt2.alt, -50)
+
+		-- zero depth should work
+		local wpt3 = ai.Waypoint.createNaval(
+				vector.Vec2.new(100, 200),
+				10, 0, "TestZero")
+		assert.are.equal(wpt3.alt, 0)
+
+		-- negative depth should use absolute value
+		local wpt4 = ai.Waypoint.createNaval(
+				vector.Vec2.new(100, 200),
+				10, -30, "TestNeg")
+		assert.are.equal(wpt4.alt, -30)
+	end)
 end)
