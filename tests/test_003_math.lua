@@ -83,6 +83,10 @@ describe("validate math.", function()
 
 	test("isBitSet", function()
 		assert.is_true(dcsext.math.isBitSet(3, 8))
+		assert.is_false(dcsext.math.isBitSet(0, 2))
+		assert.is_true(dcsext.math.isBitSet(1, 2))
+		assert.is_false(dcsext.math.isBitSet(0, 6))
+		assert.is_true(dcsext.math.isBitSet(1, 6))
 	end)
 
 	test("toBoolean", function()

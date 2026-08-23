@@ -86,8 +86,7 @@ end
 -- @param value the value we want to test
 -- @return true when bit is set, false otherwise
 function _t.isBitSet(bit, value)
-	local bitval = (2^bit) * 2
-	return (value % bitval) >= bit
+	return math.floor(value / (2^bit)) % 2 == 1
 end
 
 --- Is a point inside a circle?
