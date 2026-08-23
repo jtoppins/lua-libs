@@ -75,7 +75,7 @@ end
 local _t = {}
 
 --- returns the directory seperator used for the given OS
-_t.pathSeperator = package.config:sub(1,1)
+_t.pathSeparator = package.config:sub(1,1)
 
 --- Extract the specified files from the zip archive and convert them
 -- to a lua table.
@@ -104,7 +104,7 @@ end
 -- @param ... varadic argument list of strings
 -- @return joined string using the OS directory seperator
 function _t.joinPaths(...)
-	return mystring.join({...}, _t.pathSeperator)
+	return mystring.join({...}, _t.pathSeparator)
 end
 
 --- Is a path a directory?

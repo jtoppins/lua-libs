@@ -11,7 +11,7 @@ describe("validate io", function()
 	test("joinPaths", function()
 		local a = "foo"
 		local b = "bar"
-		local expected = a .. dcsext.io.pathSeperator .. b
+		local expected = a .. dcsext.io.pathSeparator .. b
 
 		assert.is.equal(expected, dcsext.io.joinPaths(a, b))
 	end)
