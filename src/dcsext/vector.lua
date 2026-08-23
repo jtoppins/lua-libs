@@ -304,7 +304,7 @@ function Vec3:magnitude()
 end
 
 --- Alias to get the magnitude of the vector.
-Vec3.length = Vec2.magnitude
+Vec3.length = Vec3.magnitude
 
 --- Translate a Vec3.
 function Vec3:translate(dx, dy, dz)
