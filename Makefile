@@ -164,7 +164,7 @@ quiet_cmd_distzip     = ZIP     $@
 
 quiet_cmd_mod_remove  = RM      $@
       cmd_mod_remove  = \
-		rm -rf $(SCRIPT_INSTALL_PATH)/$(MODNAME)* \
+		rm -rf $(SCRIPTS_INSTALL_PATH)/$(MODNAME)* \
 			$(SCRIPTS_INSTALL_PATH)/loadplugins.lua
 
 quiet_cmd_mod_install = INSTALL $(MODNAME) PREFIX=$(PREFIX)
