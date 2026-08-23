@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
---- SpatialHash. Provides a basic spatial hasing container for 2d
+--- SpatialHash. Provides a basic spatial hashing container for 2d
 -- objects to facilitate fast neighbor query.
 -- @classmod dcsext.containers.SpatialHash
 
@@ -23,9 +23,13 @@ end
 
 local SpatialHashGrid = class("SpatialHash2D")
 
+--- Object class stored on the grid, instances track the cells they
+-- occupy so update() can move them efficiently.
 SpatialHashGrid.Object = Object
 
 --- Constructor.
+-- @param tablesize number of hash buckets in the grid
+-- @param cellsize edge length of one grid cell in world units
 function SpatialHashGrid:__init(tablesize, cellsize)
 	self._cellsize  = cellsize
 	self._tablesize = tablesize
@@ -38,7 +42,8 @@ function SpatialHashGrid:__init(tablesize, cellsize)
 end
 
 --- Maps a 2d position(x, y) into our cell grid.
--- @param position a table with members 'x' and 'y'.
+-- @param x x coordinate of the position to hash.
+-- @param y y coordinate of the position to hash.
 function SpatialHashGrid:_hash(x, y)
 	local xi = x * P1
 	local yi = y * P2
@@ -63,6 +68,10 @@ function SpatialHashGrid:_getBounds(position, radius)
 end
 
 --- Returns a new Object already inserted into the grid.
+-- @param position center of the object as a Vec2
+-- @param radius radius of the object, the object occupies every cell
+-- its bounding circle overlaps
+-- @return the inserted Object instance
 function SpatialHashGrid:newObject(position, radius)
 	local object = Object(position, radius)
 
@@ -72,6 +81,10 @@ function SpatialHashGrid:newObject(position, radius)
 end
 
 --- Update the position of object in the grid.
+-- Call after changing an object's position or radius so it is
+-- re-registered under the cells it now overlaps, no-op when the
+-- occupied cells did not change.
+-- @param object the Object to move within the grid
 function SpatialHashGrid:update(object)
 	local bounds = self:_getBounds(object.position, object.radius)
 
@@ -85,6 +98,8 @@ function SpatialHashGrid:update(object)
 end
 
 --- Add a new object into the grid.
+-- @param object the Object to register, every cell overlapped by its
+-- bounding circle will reference it
 function SpatialHashGrid:insert(object)
 	local bounds = self:_getBounds(object.position, object.radius)
 
@@ -99,6 +114,7 @@ function SpatialHashGrid:insert(object)
 end
 
 --- Remove object from the grid.
+-- @param object the Object to unregister from all of its cells
 function SpatialHashGrid:remove(object)
 	local bounds = object._cells
 
@@ -111,6 +127,13 @@ function SpatialHashGrid:remove(object)
 end
 
 --- Find all objects in the grid within radius of position.
+-- The search visits every cell overlapped by the query circle, so
+-- results may include objects whose distance is up to their own
+-- radius beyond it, callers can filter further if exact distances
+-- are required.
+-- @param position center of the query circle as a Vec2
+-- @param radius radius of the query circle
+-- @return table keyed by the found Object instances
 function SpatialHashGrid:findNear(position, radius)
 	local bounds = self:_getBounds(position, radius)
 

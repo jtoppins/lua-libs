@@ -1,17 +1,20 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Line - draw a line on the F10 map.
+-- @classmod dcsext.ui.Line
+-- @see dcsext.ui.DrawObject
+
 local class = require("dcsext.class")
 local DrawObject = require("dcsext.ui.DrawObject")
 
---- Draw a line on the F10 map.
--- @classmod dcsext.ui.Line
--- @see dcsext.ui.DrawObject
 local Line = class("Line", DrawObject)
 
 --- Constructor.
+-- Raises an error when fewer than two points are supplied.
 -- @param points lua list of 3d points, only the first 2 points will
 --        be used.
--- @param scope ex.enum.coalition, which coalition can see the line
+-- @param scope dcsext.enum.coalition, which coalition can see the
+--        line
 function Line:__init(points, scope)
 	assert(type(points) == "table" and #points >= 2,
 		"invalid points")

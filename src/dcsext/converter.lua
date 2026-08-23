@@ -1,25 +1,38 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
---- Units Converter.
--- Converts between common units of measure.
-
--- DCS base units:
--- distance = meters
--- angle = radians
--- mass = kilograms
--- position = dcs custom floating point triple
--- pressure = pascals
--- temperature = kelvins
--- speed = meters per second
+--- Converter - converts between common units of measure.
+--
+-- DCS base units are meters for distance, radians for angle, kilograms
+-- for mass, pascals for pressure, kelvins for temperature and
+-- meters/second for speed. Positions are the DCS coordinate
+-- triple {x, y, z}.
+--
+-- Built-in registered unit strings, conversions are only possible
+-- between units of the same measure:
+--
+-- * LENGTH: "m", "ft", "nm" nautical mile, "sm" statute mile, "km"
+-- * MASS: "kg", "g", "lbs"
+-- * SPEED: "mps", "knots", "kph", "mph"
+-- * PRESSURE: "pascal", "inhg", "mmhg", "hpa", "mbar"
+-- * TEMPERATURE: "kelvin", "celsius", "fahrenheit"
+-- * FREQUENCY: "hz", "khz", "mhz"
+-- * COORDINATES: "dcs", "dd", "ddm", "dms" and "mgrs"
+--
+-- Coordinate units convert between DCS position triples ("dcs") and
+-- `{latitude = , longitude = , altitude = }` tables ("dd"/"ddm"/"dms")
+-- or MGRS tables ("mgrs"). MGRS tables carry the fields UTMZone,
+-- MGRSDigraph, Easting and Northing. The optional precision argument
+-- sets the number of decimal places shown by tostring; for ddm/dms it
+-- adjusts the minutes/seconds digits.
 
 local mytable = require("dcsext.table")
 
 local _unitstbl = {}
 
---- Position formats for latitude/longitude coordinates.
--- @field DD degrees decimal, 32.12345 / -78.2345
--- @field DDM degrees decimal minutes, 32 12.34' / -78 23.45'
--- @field DMS degrees minutes seconds, 32 12' 15" / -78 23' 28"
+-- Position formats for latitude/longitude coordinates:
+-- DD  = degrees decimal, 32.12345 / -78.2345
+-- DDM = degrees decimal minutes, 32 12.34' / -78 23.45'
+-- DMS = degrees minutes seconds, 32 12' 15" / -78 23' 28"
 local posfmt = {
 	["DD"]  = 1,
 	["DDM"] = 2,
@@ -149,7 +162,7 @@ end
 
 local _t = {}
 
---- table of possible measures: length, speed, etc
+--- Supported measures, unit conversion is only possible within one.
 _t.measure = {
 	["LENGTH"]      = 1,
 	["MASS"]        = 2,
@@ -161,10 +174,13 @@ _t.measure = {
 }
 
 --- Convert between units of measure.
+-- Unit strings are case-insensitive and both units must belong to the
+-- same measure, see the module description for the built-in units.
 -- @param value value(number|table) to convert
--- @param fromunit a units string the value is currently in
--- @param tounit unit of measure the convert value to
--- @return converted value or nil on error
+-- @param fromunit units string the value is currently in
+-- @param tounit unit of measure to convert the value to
+-- @return the converted value or nil on error followed by an
+--   error message
 function _t.convert(value, fromunit, tounit)
 	local from = _unitstbl[fromunit:upper()]
 	local to   = _unitstbl[tounit:upper()]
@@ -201,11 +217,14 @@ end
 -- @param unitstr the string used to reference this unit, will be
 --    converted to uppercase. There cannot be collisions between units.
 -- @param measure one of the items in dcsext.converter.measure.
--- @param frombase function assumes value is in a DCS base unit and
---    converts to the target unit.
--- @param tobase function assumes value is in this unit and it converts
---    it to the DCS base unit.
--- @param tostr (optional) converts to a human readable representation
+-- @param frombase converts a DCS base unit value to this unit, either
+--    a function or a scale factor(number), nil passes values through
+--    unchanged.
+-- @param tobase converts a value in this unit back to the DCS base
+--    unit, either a function or a scale factor(number), nil passes
+--    values through unchanged.
+-- @param tostr (optional) converts to a human readable representation,
+--    called by dcsext.converter.tostring with (value, precision)
 -- @param overwrite (optional) flag to overwrite any previous entry.
 -- @return True if successful otherwise false, error msg
 function _t.register(unitstr, measure, frombase, tobase, tostr, overwrite)
@@ -246,11 +265,13 @@ function _t.register(unitstr, measure, frombase, tobase, tostr, overwrite)
 end
 
 --- Convert value to a human readable representation.
+-- Uses the tostr callback given at registration time, when a unit has
+-- none the value is formatted as "<value> <symbol>".
 -- @param value the value to display
 -- @param unitstr unit string that was registered
--- @param precision (optional) defines how many decimal places will be shown
---    the default is 2.
--- @return string representation of value or nil
+-- @param precision (optional) defines how many decimal places will be
+--    shown, the default is 2.
+-- @return string representation of value or nil if the unit is unknown
 function _t.tostring(value, unitstr, precision)
 	local entry = _unitstbl[unitstr:upper()]
 

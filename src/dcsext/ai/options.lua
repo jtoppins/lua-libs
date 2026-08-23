@@ -6,7 +6,7 @@ local _t = {}
 
 --- Create an option task table.
 -- @param optid the option ID, from AI.Option.*.id.*
--- @param value option approperate value to set the option to
+-- @param value option appropriate value to set the option to
 -- @return table, dcsext.enum.TASKTYPE.OPTION
 function _t.create(optid, value)
 	dcsext.check.number(optid)
@@ -40,6 +40,8 @@ end
 
 --- Takes an options table from ai.options.create() and wraps the option
 -- so it is able to be stuck into an advanced waypoint task list.
+-- @param optiontbl options table from dcsext.ai.options.create()
+-- @return table, dcsext.enum.TASKTYPE.TASK
 function _t.wrappedOption(optiontbl)
 	local params = {}
 	params.action = {

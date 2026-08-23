@@ -1,6 +1,6 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
---- functions/classes to manipulate the game environment
+--- Env - functions/classes to manipulate the game environment.
 
 local myos    = require("os")
 local Logger  = require("dcsext.env.Logger")
@@ -95,8 +95,10 @@ function _t.getZuluTime(abstime)
 	return abstime - utcOffset
 end
 
--- expose os.date and os.time functions to the mission environment.
+--- Expose `os.date` to the mission environment.
 _t.date = myos.date
+
+--- Expose `os.time` to the mission environment.
 _t.time = myos.time
 
 --- Load a new mission file.

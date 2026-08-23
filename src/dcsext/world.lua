@@ -53,6 +53,8 @@ function _t.getNextMarkID()
 end
 
 --- Are `side1` and `side2` enemies?
+-- @param side1 coalition id from coalition.side
+-- @param side2 coalition id from coalition.side
 -- @return true means `side1` and `side2` are enemies
 function _t.isEnemy(side1, side2)
 	if side1 == side2 then

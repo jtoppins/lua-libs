@@ -168,7 +168,7 @@ end
 --- A list of tasks indexed numerically for when the task will be executed
 -- in accordance with the AI task queue rules. This is the task that the
 -- DCS mission editor will default to using for groups placed in the editor.
--- @param orderedlist
+-- @param orderedlist list of tasks to execute in sequence
 function _t.combo(orderedlist)
 	return exec.createTaskTbl('ComboTask', orderedlist),
 		enum.TASKTYPE.TASK
@@ -182,6 +182,9 @@ end
 -- Can be used with any task in DCS. Note that options and commands do
 -- *NOT* have stopConditions. These tasks are executed immediately and
 -- take "no time" to run.
+-- @param task the task table
+-- @param startcondition start condition for the task
+-- @param stopcondition stop condition for the task
 function _t.controlled(task, startcondition, stopcondition)
 	local params = {}
 	params.task = task
@@ -195,7 +198,7 @@ end
 -- helicopters will be unloaded at. Used in conjunction with the embarking
 -- task.
 -- @param point location
--- @param radius
+-- @param radius zone radius in meters
 function _t.disembarkFromTransport(point, radius)
 	local params = {}
 	params.x = point.x
@@ -209,6 +212,10 @@ end
 -- infantry group, the controlled helicopter flight will land at the
 -- specified coordinates, pick up boarding troops and transport them
 -- to that groups DisembarkFromTransport task.
+-- @param point pickup point (x/y table or Vec2)
+-- @param groups list of groups to embark
+-- @param duration duration in seconds waiting at the pickup point
+-- @param distribution distribution flag/table enabling distribution among LZs
 function _t.embarking(point, groups, duration, distribution)
 	local params = {}
 	params.x = point.x
@@ -230,7 +237,7 @@ end
 -- dropoff point defined by another task for the ground forces;
 -- DisembarkFromTransport task.
 -- @param point location where AI is expecting to be picked up
--- @param radius
+-- @param radius zone radius in meters
 function _t.embarkToTransport(point, radius)
 	local params = {}
 	params.x = point.x
@@ -323,6 +330,9 @@ end
 -- formation. If the assigned group is on the ground the AI will orbit
 -- overhead. If assigned to a flight lead or group its wingmen will stay
 -- in their specified formation.
+-- @param group the group to follow
+-- @param pos position relative to the followed group
+-- @param wptidx optional waypoint index the following starts at
 function _t.follow(group, pos, wptidx)
 	local params = {}
 	params.groupId = group:getID()
@@ -342,6 +352,11 @@ end
 -- the followed group. If the assigned group is on the ground the AI will
 -- orbit overhead. If assigned to a flight lead or group its wingmen will
 -- stay in their specified formation.
+-- @param group group to escort
+-- @param pos position relative to the escorted group
+-- @param engagedist maximum engagement distance
+-- @param tgtlist set of attribute names that are valid targets
+-- @param wptidx optional waypoint index
 function _t.escort(group, pos, engagedist, tgtlist, wptidx)
 	local task, tasktype = _t.follow(group, pos, wptidx)
 
@@ -356,6 +371,11 @@ end
 -- If multiple helicopters are in the group then the aircraft will be
 -- distributed throughout the orbit. The orbit pattern is roughly just
 -- flying back and forth.
+-- @param group group to escort ground
+-- @param pos position relative to the ground group
+-- @param orbitdist orbit distance from the ground group
+-- @param tgtlist set of attribute names that are valid targets
+-- @param wptidx optional waypoint index
 function _t.escortGround(group, pos, orbitdist, tgtlist, wptidx)
 	local task, tasktype = _t.escort(group, pos, orbitdist,
 					 tgtlist, wptidx)
@@ -373,6 +393,11 @@ end
 -- JTAC. Any detected targets will be assigned as targets to the player
 -- via the JTAC radio menu. Target designation is set to auto and is
 -- dependent on the circumstances.
+-- @param freq radio frequency
+-- @param mod modulation (radio.modulation key)
+-- @param callid call name index 1-18
+-- @param callnum call number 1-9
+-- @param prio optional priority
 function _t.fac(freq, mod, callid, callnum, prio)
 	local params = {}
 	params.frequency  = tonumber(freq)
@@ -391,6 +416,14 @@ end
 --- Assigns the controlled group to act as a Forward Air Controller or
 -- JTAC in attacking the specified group. This task adds the group to
 -- the JTAC radio menu and interacts with a player to destroy the target.
+-- @param group group reference to target
+-- @param wpnType weapon type numeric enum
+-- @param designation AI.Task.Designation key
+-- @param datalink boolean enabling datalink
+-- @param freq radio frequency
+-- @param mod modulation (radio.modulation key)
+-- @param callid call name index 1-18
+-- @param callnum call number 1-9
 function _t.facAttackGroup(group, wpnType, designation, datalink,
 			   freq, mod, callid, callnum)
 	local task, tasktype = _t.fac(freq, mod, callid, callnum)
@@ -419,6 +452,15 @@ end
 -- JTAC and engage the specified group as a JTAC target once it is detected.
 -- This task adds the group to the JTAC radio menu and interacts with a
 -- player to destroy the target.
+-- @param group group reference to target
+-- @param wpnType weapon type numeric enum
+-- @param designation AI.Task.Designation key
+-- @param datalink boolean enabling datalink
+-- @param freq radio frequency
+-- @param mod modulation (radio.modulation key)
+-- @param callid call name index 1-18
+-- @param callnum call number 1-9
+-- @param prio optional priority
 function _t.facEngageGroup(group, wpnType, designation, datalink,
 			   freq, mod, callid, callnum, prio)
 	local task, tasktype = _t.facAttackGroup(group, wpnType, designation,
@@ -440,6 +482,10 @@ end
 -- way to make AI use up all of their ammo.
 -- It takes approximately 3 minutes for artillery positions to prepare and
 -- fire at the specified target.
+-- @param aimPoint point on the ground to shoot at
+-- @param tgtRad optional target radius in meters
+-- @param ctrBtryRad optional counterbattery radius in meters
+-- @param optionalparams optional parameters
 function _t.fireAtPoint(aimPoint, tgtRad, ctrBtryRad, optionalparams)
 	local params = {}
 	params.point = vector.Vec2(aimPoint):get()
@@ -463,6 +509,9 @@ end
 -- also has tools for placing units in historic bomber formations.
 -- This task is also labeled as "WW2: Big Formation" in the editor, but it
 -- is functional with any aircraft assigned the ground attack task.
+-- @param group the group to follow
+-- @param pos position relative to the followed group
+-- @param wptidx optional waypoint index the following starts at
 function _t.followBig(group, pos, wptidx)
 	local task, tasktype = _t.follow(group, pos, wptidx)
 	task.id = 'FollowBigFormation'
@@ -479,6 +528,8 @@ end
 -- Helicopters because I have no clue what at V-22 would be defined as
 -- within the sim.
 -- For landing at airbases, farps, or ships see the mission task page.
+-- @param point location on ground to land
+-- @param duration optional duration in seconds to stay at the point
 function _t.land(point, duration)
 	local params = {}
 	params.point = vector.Vec2(point):get()
@@ -491,7 +542,9 @@ function _t.land(point, duration)
 	return exec.createTaskTbl('Land', params), enum.TASKTYPE.TASK
 end
 
---- Orders an aircraft group to orbit at the waypoint.
+--- Assigns the aircraft to orbit at a waypoint.
+-- @param pat orbit pattern from dcsext.enum.ORBITPATTERN
+-- @param options orbit options table
 function _t.orbit(pat, options)
 	local params = {}
 	params.pattern  = check.tblkey(pat, dcsext.enum.ORBITPATTERN,
@@ -537,6 +590,9 @@ end
 --- Assigns the aircraft to follow a ship group and perform a racetrack
 -- orbit along the current heading of the fleet at the set altitude and
 -- speed.
+-- @param group group to follow
+-- @param speed orbit speed
+-- @param alt orbit altitude
 function _t.recoverytanker(group, speed, alt)
 	local params = {}
 	params.groupId = group:getID()
@@ -555,6 +611,9 @@ end
 
 --- Assigns a point on the ground for which the AI will do a strafing run
 -- with guns or rockets.
+-- @param point point on the ground to strafe
+-- @param length length of the strafing run
+-- @param optionalparams optional parameters
 function _t.strafing(point, length, optionalparams)
 	local task, tasktype = _t.bombing(point, optionalparams)
 

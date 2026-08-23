@@ -1,28 +1,42 @@
 -- SPDX-License-Identifier: LGPL-3.0
 
+--- Class - creates tables that emulate properties of a class.
+
 local mytable = require("dcsext.table")
 
---- Return a table object (`obj`) that emulates properties of a class.
--- If the table defines an entry "\_\_init" that is a function,
--- \_\_init will be run when new instances are created.
--- A new instance of `obj` can be created by calling `newobj = obj()`.
--- Multiple inheritance is not tracked, emulating java like
--- inhertiance where there is single inheritance but allows for
--- multiple interfaces to be inherited.
--- Since all data is shallow copied all class instances must create
--- their instance variables in their \_\_init(). Thus if a class
--- inherits from multiple classes its \_\_init much call each base
--- class's \_\_init function, similar to python 2.0 classes.
--- All methods and instance data is visiable and are regular lua table
--- entries. There is no concept of data protection like private,
--- as in C++, so care must be taken to not modify a class's date
--- outside of its methods unless the data is intended to be public.
--- A convention to identify private data and methods is to prefix
--- these field names with '\_'.
+--- Create a table object that emulates properties of a class.
+-- The returned class table is instantiated by calling it,
+-- `newobj = obj(...)`. Instantiation shallow copies the class into
+-- a new instance, deep copies any registered properties, then runs
+-- "\_\_init" if the class defines one.
+--
+-- Inheritance emulates java like single inheritance: only the
+-- `base` argument forms the inheritance chain tracked by super()
+-- and isa(). Additional classes passed via `...` act like java
+-- interfaces, their methods are merged into the new class but are
+-- not part of the inheritance chain. Merged keys overwrite existing
+-- ones so later arguments take precedence over earlier arguments
+-- and over `base`. Since instance data is shallow copied every
+-- class must create its instance variables in its \_\_init(),
+-- thus when inheriting from multiple sources \_\_init must call
+-- each base class's \_\_init explicitly, similar to python 2.0
+-- classes.
+--
+-- Managed properties can be defined inside \_\_init() using
+-- _property(), they behave like regular fields but route access
+-- through optional setter and notification hooks.
+--
+-- All methods and instance data are visible and are regular lua
+-- table entries. There is no concept of data protection like
+-- private, as in C++, so care must be taken to not modify a
+-- class's data outside of its methods unless the data is intended
+-- to be public. A convention to identify private data and methods
+-- is to prefix these field names with '\_'.
 --
 -- @param name name of the class
 -- @param base the base class this new class should inherit from
--- @param ... additional base classes to inherit methods from
+-- @param ... additional base classes to merge methods from,
+-- keys from these classes override keys defined by earlier ones
 -- @return a class like object table
 local function class(name, base, ...)
 	local newcls = mytable.shallowCopy(base or {})
@@ -52,18 +66,26 @@ local function class(name, base, ...)
 			end
 			return c
 		end,
+		-- classes stringify as class(<name>)
 		__tostring = function(cls)
 			return string.format("class(%s)", cls.__clsname)
 		end
 	}
 
-	-- All property setter information stored here
+	-- property definitions (value, set, setAfter) stored here
 	newcls._props = newcls._props or {}
 
+	--- Return the base class this class inherits from.
+	-- @return the base class table or nil if the class has no base
 	function newcls:super()
 		return base
 	end
 
+	--- Test if this class inherits from another class.
+	-- Only walks the single inheritance chain, classes passed as
+	-- additional bases (interfaces) are not tracked.
+	-- @param other the class to test against
+	-- @return boolean, true means this class is derived from other
 	function newcls:isa(other)
 		local b_isa = false
 		local cur_class = newcls
@@ -78,6 +100,20 @@ local function class(name, base, ...)
 		return b_isa
 	end
 
+	--- Register a managed property on the instance.
+	-- Properties behave like regular fields but are stored in the
+	-- internal `_props` table, keeping the property hooks (see the
+	-- instance metatable) active for that key. Must be called from
+	-- \_\_init() so every instance gets its own copy of the
+	-- property value.
+	-- @param propName name of the property
+	-- @param value initial value of the property
+	-- @param set optional setter hook called before the value is
+	-- stored, signature `set(self, key, newvalue, oldvalue)`, its
+	-- return value is what gets stored
+	-- @param setAfter optional notification hook invoked after the
+	-- new value is stored, signature
+	-- `setAfter(self, key, value, oldvalue)`
 	function newcls:_property(propName, value, set, setAfter)
 		local props = rawget(self, "_props")
 		props[propName] = {
@@ -96,6 +132,8 @@ local function class(name, base, ...)
 	newcls.__clsname = name or tostring(newcls)
 	if newcls.__mt == nil then
 		newcls.__mt = {
+			-- instances stringify as instance(<name>) by default,
+			-- may be overridden through the class's __mt table
 			__tostring = function(c)
 				return string.format("instance(%s)",
 					c.__clsname)
